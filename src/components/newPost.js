@@ -8,11 +8,12 @@ class NewPost extends Component {
     super(props);
     this.jokeRef = React.createRef();
     this.state = {
-      joke: ''
+      joke: '',
+      db: fire.firestore()
     }
 
-   this.jokeHandler = this.jokeHandler.bind(this);
-   this.handleNewPost = this.handleNewPost.bind(this);
+    this.jokeHandler = this.jokeHandler.bind(this);
+    this.handleNewPost = this.handleNewPost.bind(this);
   }
   render() {
     return (
@@ -25,16 +26,32 @@ class NewPost extends Component {
       </div>
     );
   }
+  
 
   jokeHandler(e) {
     this.setState({joke: e.target.value});
   }
 
-  handleNewPost() {
-    this.props.newPost(this.state.joke);
+  async handleNewPost() {
+    let jokeObj = {
+      post: this.state.joke,
+      score: 0,
+      username: this.props.userData.username
+    }
+    this.props.newPost(jokeObj);
+    let resData = await this.state.db.collection('posts').doc('user').get();
+    resData = resData.data().posts;
+    resData.push(jokeObj);
+    this.state.db.collection('posts').doc('user').set({posts: resData});
     this.setState({joke: ''});
     this.jokeRef.current.value = '';
   }
+
+  
 }
 
-export default connect(null, {newPost})(NewPost);
+const mapStateToProps = state => ({
+  userData: state.userData
+});
+
+export default connect(mapStateToProps, { newPost })(NewPost);

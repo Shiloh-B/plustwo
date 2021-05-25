@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 
 function Post({joke}) {
 
-  const [voteTotal, setVoteTotal] = useState(0);
+  const [voteTotal, setVoteTotal] = useState(joke.score);
 
   return (
     <div className="post-container">
       <div className="post-meta-container">
-        <p className="meta-username">Username</p>
+        <p className="meta-username">{joke.username}</p>
         {
         voteTotal > 0 ? 
         <p className="vote-total">+{voteTotal}</p> 
@@ -16,7 +16,7 @@ function Post({joke}) {
         }
       </div>
       <div className="post-joke-container">
-        <h1>{joke}</h1>
+        <h1>{joke.post}</h1>
       </div>
       <div className="voting-container">
         <div className="button vote-button" onClick={() => setVoteTotal(voteTotal + 2)}>+2</div>

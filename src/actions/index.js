@@ -1,7 +1,7 @@
-export const isLogged = (credentials) => {
+export const userData = (userData) => {
   return {
-    type: 'LOGIN',
-    payload: credentials
+    type: 'USER_DATA',
+    payload: userData
   };
 };
 

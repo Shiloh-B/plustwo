@@ -1,12 +1,20 @@
 import { useState, useEffect } from 'react';
 import fire from '../fire';
 import Login from './login';
-import Main from './main';
+import { useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { userData } from '../actions/index';
 
 function LoginPage() {
 
+  const history = useHistory();
+  const db = fire.firestore();
+  const dispatch = useDispatch();
+  let e = '';
+
   const [user, setUser] = useState('');
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const [emailError, setEmailError] = useState('');
@@ -25,7 +33,9 @@ function LoginPage() {
 
   const handleLogin = () => {
     clearErrors();
-    fire.auth().signInWithEmailAndPassword(email, password)
+    fire.auth().signInWithEmailAndPassword(email, password).then(() => {
+      e = email;
+    })
     .catch(err => {
       switch(err.code) {
         case "auth/invalid-email":
@@ -46,7 +56,9 @@ function LoginPage() {
 
   const handleSignup = () => {
     clearErrors();
-    fire.auth().createUserWithEmailAndPassword(email, password)
+    fire.auth().createUserWithEmailAndPassword(email, password).then(() => {
+      e = email
+    })
     .catch(err => {
       switch(err.code) {
         case "auth/email-already-in-use":
@@ -62,16 +74,15 @@ function LoginPage() {
     });
   }
 
-  const handleLogout = () => {
-    clearErrors();
-    fire.auth().signOut();
-  }
-
   const authListener = () => {
     fire.auth().onAuthStateChanged(user => {
       if(user) {
-        clearInputs();
         setUser(user);
+        history.push({
+          pathname: '/plustwo',
+          state: {email: user.email}
+        });
+        clearInputs();
       } else {
         setUser('');
       }
@@ -84,11 +95,10 @@ function LoginPage() {
 
   return (
     <div>
-      {user ? (
-        <Main handleLogout={handleLogout} />
-      ) : (
-        <Login email={email} 
-        setEmail={setEmail} 
+      <Login email={email} 
+        setEmail={setEmail}
+        username={username}
+        setUsername={setUsername} 
         password={password} 
         setPassword={setPassword}
         handleLogin={handleLogin} 
@@ -97,7 +107,6 @@ function LoginPage() {
         setHasAccount={setHasAccount}
         emailError={emailError}
         passwordError={passwordError} />
-      )}
     </div>
     
   );

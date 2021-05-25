@@ -3,8 +3,15 @@ import React from 'react';
 function Nav({handleLogout}) {
   return (
     <div className='nav-bar'>
-      <h1>Plus Two</h1>
-      <div className="button logout" onClick={handleLogout}>Logout</div>
+      <div>
+
+      </div>
+      <div>
+        <h1>Plus <span>Two</span></h1>
+      </div>
+      <div className="grid-column">
+        <div className="button logout" onClick={handleLogout}>Logout</div>
+      </div>
     </div>
   );
 }

@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
-import loginReducer from './isLogged';
+import newPostReducer from './newPost';
 
 const rootReducer = combineReducers({
-  checkLogin: loginReducer
+  newPost: newPostReducer
 });
 
 export default rootReducer;

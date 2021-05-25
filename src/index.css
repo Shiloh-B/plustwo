@@ -26,15 +26,14 @@ code {
 }
 
 .button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 5px;
+  display: inline-block;
+  padding: 10px;
   border: 2px solid var(--slate-blue);
   border-radius: 4px;
   cursor: pointer;
   transition: all .2s ease;
   margin: .5em;
+  font-weight: bold;
 }
 
 .button:hover {
@@ -112,18 +111,123 @@ code {
 .nav-bar {
   width: 100%;
   background-color: var(--rich-black);
-  display: flex;
-  justify-content: center;
-  align-items: center;
   border-bottom: 2px solid var(--slate-blue);
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  
 }
 
 .nav-bar h1 {
   font-size: 3em;
-  margin: .25em 0;
+  margin: .25em 0em;
+  grid-column: 2;
+  text-align: center;
 }
 
-.logout {
+.nav-bar h1 span {
+  color: var(--slate-blue);
+}
+
+.grid-column {
+  display: flex;
   justify-content: flex-end;
+  align-items: center;
+
+}
+
+/* New Post */
+
+.new-post-container {
+  margin: 1em auto;
+  width: 40%;
+  border: 2px solid var(--slate-blue);
+  border-radius: 3px;
+  background-color: var(--rich-black);
+  padding: .5em;
+}
+
+.new-post-container p {
+  margin: .25em;
+  font-weight: 500;
+  text-align: center;
+}
+
+.joke-container {
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.joke-input {
+  border: none;
+  background-color: var(--slate-blue);
+  border-radius: 2px;
+  border: 4px solid var(--oxford-blue);
+  width: 80%;
+  outline: none;
+  color: var(--white);
+  font-size: 1.25em;
+  padding: 5px;
+}
+
+.post {
+  padding: 5px 10px;
+}
+
+/* Feed */
+.feed-container {
+  margin: 0 auto;
+  width: 40%;
+  height: 600px;
+  border: 2px solid var(--slate-blue);
+  border-radius: 3px;
+  background-color: var(--rich-black);
+  padding: .5em;
+  text-align: center;
+  overflow-y: auto;
+}
+
+/* posts */
+
+.post-meta-container {
+  width: 90%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+}
+
+.meta-username {
+  display: inline-block;
+  margin: .25em 0 0 0;
+  font-weight: 600;
+  text-align: left;
+}
+
+.vote-total {
+  display: inline-block;
+  margin: .25em 0 0 0;
+  font-weight: 600;
+  text-align: right;
+}
+
+.post-joke-container {
+  width: 90%;
+  padding: 10px;
+  border: 3px solid var(--slate-blue);
+  margin: .25em auto;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.voting-container {
+  width: 90%;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.vote-button {
+  width: 50%;
 }
 

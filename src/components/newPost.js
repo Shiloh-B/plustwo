@@ -43,7 +43,6 @@ class NewPost extends Component {
     resData = resData.data().posts;
     resData.push(jokeObj);
     this.state.db.collection('posts').doc('user').set({posts: resData});
-    this.setState({joke: ''});
     this.jokeRef.current.value = '';
   }
 

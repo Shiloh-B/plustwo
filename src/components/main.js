@@ -6,7 +6,7 @@ import fire from 'firebase';
 import { useHistory } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { userData } from '../actions/index';
+import { userData, newPost } from '../actions/index';
 
 function Main() {
 
@@ -28,6 +28,8 @@ function Main() {
 
   const handleLogout = () => {
     fire.auth().signOut().then(() => {
+      dispatch(userData({}));
+      dispatch(newPost([]));
       history.push('/')
     });
   };

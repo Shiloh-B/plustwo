@@ -2,14 +2,11 @@ import { useState, useEffect } from 'react';
 import fire from '../fire';
 import Login from './login';
 import { useHistory } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { userData } from '../actions/index';
 
 function LoginPage() {
 
   const history = useHistory();
   const db = fire.firestore();
-  const dispatch = useDispatch();
   let e = '';
 
   const [user, setUser] = useState('');
@@ -33,7 +30,8 @@ function LoginPage() {
 
   const handleLogin = () => {
     clearErrors();
-    fire.auth().signInWithEmailAndPassword(email, password).then(() => {
+    fire.auth().signInWithEmailAndPassword(email, password)
+    .then(() => {
       e = email;
     })
     .catch(err => {
@@ -56,8 +54,14 @@ function LoginPage() {
 
   const handleSignup = () => {
     clearErrors();
-    fire.auth().createUserWithEmailAndPassword(email, password).then(() => {
-      e = email
+    fire.auth().createUserWithEmailAndPassword(email, password)
+    .then(() => {
+      e = email;
+      db.collection('users').doc(email).set({
+        email: email,
+        username: username,
+        posts: []
+      });
     })
     .catch(err => {
       switch(err.code) {

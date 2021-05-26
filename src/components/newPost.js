@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { newPost } from '../actions/index';
-import fire from '../fire';
+import fire, { AutoId } from '../fire';
 
 class NewPost extends Component {
   constructor(props) {
@@ -33,20 +33,41 @@ class NewPost extends Component {
   }
 
   async handleNewPost() {
+
+    // creating post obj
     let jokeObj = {
       post: this.state.joke,
       score: 0,
-      username: this.props.userData.username
+      username: this.props.userData.username,
+      email: this.props.userData.email,
+      ref: Math.random().toString(36).substr(2, 9),
+      likedUsers: [],
+      dislikedUsers: []
     }
+
+    // dispatching obj to redux 
     this.props.newPost(jokeObj);
+
+    // pushing it to total post feed
     let resData = await this.state.db.collection('posts').doc('user').get();
     resData = resData.data().posts;
     resData.push(jokeObj);
     this.state.db.collection('posts').doc('user').set({posts: resData});
+
+    // add post to user account
+    let userAccountRef = await this.state.db.collection('users')
+    .doc(this.props.userData.email).get();
+    userAccountRef = userAccountRef.data().posts;
+    userAccountRef.unshift(jokeObj);
+    this.state.db.collection('users')
+    .doc(this.props.userData.email).set({
+      posts: userAccountRef
+    }, {merge: true});
+
+    // reset values
+    this.setState({joke: ''});
     this.jokeRef.current.value = '';
   }
-
-  
 }
 
 const mapStateToProps = state => ({

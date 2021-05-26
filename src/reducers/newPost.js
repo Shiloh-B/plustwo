@@ -5,7 +5,7 @@ const newPostReducer = (state = [], action) => {
       newState.push(action.payload);
       return newState;
     default:
-      return [];
+      return state;
   }
 }
 

@@ -5,7 +5,7 @@ const userDataReducer = (state = {}, action) => {
       newState = action.payload;
       return newState;
     default:
-      return {};
+      return state;
   }
 }
 

@@ -13,9 +13,14 @@ function Feed() {
     let resData = await db.collection('posts').doc('user').get();
     resData = resData.data().posts;
     
-    resData.forEach((post) => {
-      dispatch(newPost(post.post));
-    });
+    if(resData) {
+      resData.forEach((post) => {
+        dispatch(newPost(post));
+      });
+    } else {
+      dispatch(newPost({}));
+    }
+    
   }
 
   useEffect(() => {

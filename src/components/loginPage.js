@@ -7,7 +7,6 @@ function LoginPage() {
 
   const history = useHistory();
   const db = fire.firestore();
-  let e = '';
 
   const [user, setUser] = useState('');
   const [email, setEmail] = useState('');
@@ -31,9 +30,6 @@ function LoginPage() {
   const handleLogin = () => {
     clearErrors();
     fire.auth().signInWithEmailAndPassword(email, password)
-    .then(() => {
-      e = email;
-    })
     .catch(err => {
       switch(err.code) {
         case "auth/invalid-email":
@@ -56,7 +52,6 @@ function LoginPage() {
     clearErrors();
     fire.auth().createUserWithEmailAndPassword(email, password)
     .then(() => {
-      e = email;
       db.collection('users').doc(email).set({
         email: email,
         username: username,
@@ -84,7 +79,9 @@ function LoginPage() {
         setUser(user);
         history.push({
           pathname: '/plustwo',
-          state: {email: user.email}
+          state: {
+            email: user.email
+          }
         });
         clearInputs();
       } else {

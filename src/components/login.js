@@ -1,9 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { userData } from '../actions/index';
+import { useDispatch } from 'react-redux';
 
 function Login(props) {
 
   const { email, setEmail, password, setPassword, handleLogin, handleSignup, hasAccount, setHasAccount,
   emailError, passwordError, username, setUsername } = props;
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if(!hasAccount) {
+      dispatch(userData({email: email, username: username}));
+    }
+  });
 
   if(hasAccount) {
     return (

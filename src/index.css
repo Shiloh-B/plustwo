@@ -189,8 +189,9 @@ code {
 /* Feed */
 .feed-container {
   margin: 0 auto;
+  margin-bottom: 1em;
+  max-height: 40em;
   width: 40%;
-  height: 600px;
   border: 2px solid var(--slate-blue);
   border-radius: 3px;
   background-color: var(--rich-black);
@@ -240,5 +241,38 @@ code {
 
 .vote-button {
   width: 50%;
+}
+
+/* bottom nav */
+
+.bottom-nav {
+  width: 100%;
+  background: var(--rich-black);
+  border-top: 2px solid var(--slate-blue);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* account page */
+
+.username-header {
+  text-align: center;
+}
+
+.user-post-container {
+  width: 80%;
+  margin: 0 auto;
+  margin-bottom: 1em;
+  border: 2px solid var(--slate-blue);
+  border-radius: 3px;
+  background-color: var(--rich-black);
+  padding: 10px;
+  min-height: 40em;
+}
+
+.user-post-container h2 {
+  text-align: center;
+  margin: 0;
 }
 

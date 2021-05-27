@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { newPost } from '../actions/index';
-import fire, { AutoId } from '../fire';
+import fire from '../fire';
 
 class NewPost extends Component {
   constructor(props) {
@@ -55,14 +55,11 @@ class NewPost extends Component {
     this.state.db.collection('posts').doc('user').set({posts: resData});
 
     // add post to user account
-    let userAccountRef = await this.state.db.collection('users')
-    .doc(this.props.userData.email).get();
-    userAccountRef = userAccountRef.data().posts;
-    userAccountRef.unshift(jokeObj);
-    this.state.db.collection('users')
-    .doc(this.props.userData.email).set({
-      posts: userAccountRef
-    }, {merge: true});
+    this.state.db.collection('users').doc(this.props.userData.email).get().then((res) => {
+      let postArray = res.data().posts;
+      postArray.unshift(jokeObj);
+      this.state.db.collection('users').doc(this.props.userData.email).set({posts: postArray}, {merge: true});
+    });
 
     // reset values
     this.setState({joke: ''});

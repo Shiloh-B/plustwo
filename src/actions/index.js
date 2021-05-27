@@ -11,3 +11,9 @@ export const newPost = (posts) => {
     payload: posts
   };
 };
+
+export const userLogout = () => {
+  return {
+    type: 'USER_LOGOUT'
+  }
+}

@@ -1,44 +1,41 @@
 import React, { useEffect } from 'react';
 import Nav from './nav';
 import NewPost from './newPost';
+import BottomNav from './bottomNav';
 import Feed from './feed';
 import fire from 'firebase';
-import { useHistory } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { userData, newPost } from '../actions/index';
+import { userData } from '../actions/index';
+import { useSelector } from 'react-redux';
 
 function Main() {
 
-  const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
   const db = fire.firestore();
+  const username = useSelector(state => state.userData.username);
+  const route = 'My Account'
 
 
   useEffect(() => {
-    db.collection('users').doc(location.state.email).get().then((res) => {
-      const dataToStore = {
-        email: location.state.email,
-        username: res.data().username
-      };
-      dispatch(userData(dataToStore));
-    })
+    if(username === '' || username === undefined) {
+      db.collection('users').doc(location.state.email).get().then((res) => {
+        const dataToStore = {
+          email: location.state.email,
+          username: res.data().username
+        };
+        dispatch(userData(dataToStore));
+      })
+    }
   }, []);
-
-  const handleLogout = () => {
-    fire.auth().signOut().then(() => {
-      dispatch(userData({}));
-      dispatch(newPost([]));
-      history.push('/')
-    });
-  };
 
   return (
     <div>
-      <Nav handleLogout={handleLogout} />
+      <Nav />
       <NewPost />
       <Feed />
+      <BottomNav route={route}/>
     </div>
   );
 }

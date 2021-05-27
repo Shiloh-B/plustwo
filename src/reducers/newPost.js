@@ -5,7 +5,7 @@ const newPostReducer = (state = [], action) => {
         return [];
       }
       let newState = state.slice();
-      newState.push(action.payload);
+      newState.unshift(action.payload);
       return newState;
     default:
       return state;

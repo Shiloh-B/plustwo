@@ -47,7 +47,7 @@ function Post({joke}) {
             post.score = post.score + 2;
           }
         });
-        db.collection('users').doc(joke.email).set({posts: postArray});
+        db.collection('users').doc(joke.email).set({posts: postArray}, {merge: true});
       });
     }
   }
@@ -75,7 +75,7 @@ function Post({joke}) {
         db.collection('posts').doc('user').set({posts: postArray});
       });
 
-      // add it to users liked posts list
+      // add it to users disliked posts list
       db.collection('users').doc(joke.email).get().then((res) => {
         let postArray = res.data().posts;
         postArray.forEach((post) => {
@@ -89,10 +89,19 @@ function Post({joke}) {
             post.score = post.score - 2;
           }
         });
-        db.collection('users').doc(joke.email).set({posts: postArray});
+        db.collection('users').doc(joke.email).set({posts: postArray}, {merge: true});
       });
     }    
   }
+
+  useEffect(() => {
+    console.log(score);
+    if(joke.likedUsers.includes(email)) {
+      setIsClicked('liked');
+    } else if(joke.dislikedUsers.includes(email)) {
+      setIsClicked('disliked');
+    }
+  }, [joke.likedUsers, joke.dislikedUsers, email]);
 
   if(isClicked === 'liked') {
     return (

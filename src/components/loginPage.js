@@ -52,9 +52,11 @@ function LoginPage() {
     clearErrors();
     fire.auth().createUserWithEmailAndPassword(email, password)
     .then(() => {
+      console.log(fire.auth().currentUser.uid);
       db.collection('users').doc(email).set({
         email: email,
         username: username,
+        uid: fire.auth().currentUser.uid,
         posts: []
       });
     })

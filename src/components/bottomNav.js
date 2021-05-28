@@ -1,24 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { newPost } from '../actions/index';
 import fire from '../fire';
 
 function BottomNav({route}) {
 
   const history = useHistory();
+  const dispatch = useDispatch();
   const username = useSelector(state => state.userData.username);
-  const [uid, setUid] = useState('');
-
-  useEffect(() => {
-    if(fire.auth().currentUser) {
-      setUid(fire.auth().currentUser.uid);
-    }
-  }, []);
 
   const routeHandler = () => {
+    dispatch(newPost([]));
     if(route === 'My Account') {
       history.push({
-        pathname: `/plustwo/${username}/${uid}`,
+        pathname: `/plustwo/${username}/${fire.auth().currentUser.uid}`,
         state: {
           email: fire.auth().currentUser.email,
           username: username

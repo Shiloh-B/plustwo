@@ -18,13 +18,22 @@ function Nav() {
     });
   };
 
+  const homeRouteHandler = () => {
+    history.push({
+      pathname: '/plustwo',
+      state: {
+        email: fire.auth().currentUser.email
+      }
+    });
+  }
+
   return (
     <div className='nav-bar'>
       <div>
 
       </div>
       <div>
-        <h1>Plus <span>Two</span></h1>
+        <h1 className="plus-two-header" onClick={homeRouteHandler}>Plus <span>Two</span></h1>
       </div>
       <div className="grid-column">
         <div className="button logout" onClick={handleLogout}>Logout</div>

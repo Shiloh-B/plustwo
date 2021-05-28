@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import fire from '../fire';
 import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 function Post({joke}) {
 
   const db = fire.firestore();
+  const history = useHistory();
+
   const [score, setScore] = useState(joke.score);
   const [isClicked, setIsClicked] = useState('');
 
@@ -94,14 +97,26 @@ function Post({joke}) {
     }    
   }
 
+  const userAccountHandler = () => {
+    db.collection('users').doc(joke.email).get().then((res) => {
+      let uid = res.data().uid;
+      history.push({
+        pathname: `/plustwo/${joke.username}/${uid}`,
+        state: {
+          email: joke.email,
+          username: joke.username
+        }
+      });
+    });
+  }
+
   useEffect(() => {
-    console.log(score);
     if(joke.likedUsers.includes(email)) {
       setIsClicked('liked');
     } else if(joke.dislikedUsers.includes(email)) {
       setIsClicked('disliked');
     }
-  }, [joke.likedUsers, joke.dislikedUsers, email]);
+  });
 
   if(isClicked === 'liked') {
     return (
@@ -149,7 +164,7 @@ function Post({joke}) {
     return (
       <div className="post-container">
         <div className="post-meta-container">
-          <p className="meta-username">{joke.username}</p>
+          <p className="meta-username" onClick={userAccountHandler}>{joke.username}</p>
           {
           score > 0 ? 
           <p className="vote-total">+{score}</p> 

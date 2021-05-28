@@ -133,6 +133,7 @@ code {
   margin: .25em 0em;
   grid-column: 2;
   text-align: center;
+  cursor: pointer;
 }
 
 .nav-bar h1 span {
@@ -214,6 +215,7 @@ code {
   margin: .25em 0 0 0;
   font-weight: 600;
   text-align: left;
+  cursor: pointer;
 }
 
 .vote-total {
@@ -261,7 +263,7 @@ code {
 }
 
 .user-post-container {
-  width: 80%;
+  width: 40%;
   margin: 0 auto;
   margin-bottom: 1em;
   border: 2px solid var(--slate-blue);

@@ -20,9 +20,6 @@ function NewPost() {
       post: post,
       username: userData.username,
       email: userData.email,
-      likedUsers: [],
-      dislikedUsers: [],
-      score: 0,
       ref: ''
     }
 
@@ -30,10 +27,7 @@ function NewPost() {
     db.collection('feedPosts').add({
       post: post,
       username: userData.username,
-      email: userData.email,
-      likedUsers: [],
-      dislikedUsers: [],
-      score: 0
+      email: userData.email
     }).then((ref) => {
       newPostObj.ref = ref.id;
       ref.set({ref: ref.id}, {merge: true});
@@ -45,10 +39,13 @@ function NewPost() {
         console.log(userPostArray);
         db.collection('users').doc(userData.email).set({posts: userPostArray}, {merge: true});
       });
+
+      // finally add it to the redux store
+      dispatch(newPost(newPostObj));
     });
+
     
-    // finally add it to the redux store
-    dispatch(newPost(newPostObj));
+    
 
     // clear post input bar
     postRef.current.value = '';

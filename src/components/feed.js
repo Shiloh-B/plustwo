@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 function Feed() {
 
   const postArray = useSelector(state => state.newPost);
-  const postList = postArray.map((post, idx) => <Post post={post} key={idx} />);
+  const postList = postArray.map((post) => <Post post={post} key={post.ref} />);
 
   return (
     <div className="feed-container">

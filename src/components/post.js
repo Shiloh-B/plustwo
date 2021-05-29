@@ -8,38 +8,22 @@ function Post({post}) {
   const db = fire.firestore();
   const history = useHistory();
 
-  const [score, setScore] = useState(post.score);
   const [isClicked, setIsClicked] = useState('');
 
   const email = useSelector(state => state.userData.email);
 
-  const scoreHandler = (num, vote) => {
+  const scoreHandler = (vote) => {
 
-    // set our liked or disliked var
-    vote === 'liked' ? setIsClicked('liked') : setIsClicked('disliked');
+    // setIsClicked
+    vote === isClicked ? setIsClicked('') : setIsClicked(vote);
 
-    // first locally update score
-    setScore(score + num);
-
-    // contact global feed and change score
-    db.collection('feedPosts').get().then((snapshot) => {
-      snapshot.forEach((doc) => {
-        if(doc.ref === post.ref) {
-          doc.ref.set({score: score + num}, {merge: true});
-        }
-      });
+    // creates vote document
+    db.collection('postVotes').doc(post.ref + fire.auth().currentUser.uid).set({
+      postRef: post.ref,
+      votersEmaiL: post.email,
+      vote: vote === isClicked ? '' : vote
     });
-
-    // contact users feed and change score
-    db.collection('users').doc(email).get().then((res) => {
-      let userPostArray = res.data().posts;
-      userPostArray.forEach((userPost) => {
-        if(userPost.ref === post.ref) {
-          userPost.score = userPost.score + num;
-          db.collection('users').doc(email).set({posts: userPostArray}, {merge: true});
-        }
-      });
-    });
+   
 
   }
 
@@ -57,79 +41,34 @@ function Post({post}) {
   }
 
   useEffect(() => {
-    if(post.likedUsers.includes(email)) {
-      setIsClicked('liked');
-    } else if(post.dislikedUsers.includes(email)) {
-      setIsClicked('disliked');
-    }
+    db.collection('postVotes').doc(post.ref + fire.auth().currentUser.uid).get().then((res) => {
+      if(res.exists) {
+        setIsClicked(res.data().vote);
+      }
+    });
   }, []);
 
-  if(isClicked == 'liked') {
-    return (
-      <div className="post-container">
-        <div className="post-meta-container">
-          <p className="meta-username">{post.username}</p>
-          {
-          score > 0 ? 
-          <p className="vote-total">+{score}</p> 
-          :
-          <p className="vote-total">{score}</p>
-          }
-        </div>
-        <div className="post-joke-container">
-          <h1>{post.post}</h1>
-        </div>
-        <div className="voting-container">
-          <div className="button-clicked vote-button">+2</div>
-          <div className="button vote-button" onClick={(num, vote) => scoreHandler(-2, 'disliked')}>-2</div>
-        </div>
+  return (
+    <div className="post-container">
+      <div className="post-meta-container">
+        <p className="meta-username" onClick={userAccountHandler}>{post.username}</p>
+        {
+        post.score > 0 ? 
+        <p className="vote-total">+{post.score}</p> 
+        :
+        <p className="vote-total">{post.score}</p>
+        }
       </div>
-    );
-  } else if(isClicked == 'disliked') {
-    return (
-      <div className="post-container">
-        <div className="post-meta-container">
-          <p className="meta-username">{post.username}</p>
-          {
-          score > 0 ? 
-          <p className="vote-total">+{score}</p> 
-          :
-          <p className="vote-total">{score}</p>
-          }
-        </div>
-        <div className="post-joke-container">
-          <h1>{post.post}</h1>
-        </div>
-        <div className="voting-container">
-          <div className="button vote-button" onClick={(num, vote) => scoreHandler(2, 'liked')}>+2</div>
-          <div className="button-clicked vote-button">-2</div>
-        </div>
+      <div className="post-joke-container">
+        <h1>{post.post}</h1>
       </div>
-    );
-  } else {
-    return (
-      <div className="post-container">
-        <div className="post-meta-container">
-          <p className="meta-username" onClick={userAccountHandler}>{post.username}</p>
-          {
-          score > 0 ? 
-          <p className="vote-total">+{score}</p> 
-          :
-          <p className="vote-total">{score}</p>
-          }
-        </div>
-        <div className="post-joke-container">
-          <h1>{post.post}</h1>
-        </div>
-        <div className="voting-container">
-          <div className="button vote-button" onClick={(num, vote) => scoreHandler(2, 'liked')}>+2</div>
-          <div className="button vote-button" onClick={(num, vote) => scoreHandler(-2, 'disliked')}>-2</div>
-        </div>
+      
+      <div className="voting-container">
+        <div className={`${isClicked === 'liked' ? "button-clicked" : "button"} vote-button`} onClick={(vote) => scoreHandler('liked')}>+2</div>
+        <div className={`${isClicked === 'disliked' ? "button-clicked" : "button"} vote-button`} onClick={(vote) => scoreHandler('disliked')}>-2</div>
       </div>
-     
-    );
-  }
-
+    </div>
+  );
   
 }
 

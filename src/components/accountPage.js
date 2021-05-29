@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import fire from '../fire';
 import UserPost from './userPost';
@@ -27,7 +26,7 @@ function AccountPage() {
       <Nav />
       <h1 className="username-header">{location.state.username}</h1>
       <div className="user-post-container">
-        <h2>My Posts</h2>
+        <h2>{location.state.username}'s Posts</h2>
         <div>
           {userPostsToRender}
         </div>

@@ -6,7 +6,7 @@ import Feed from './feed';
 import fire from 'firebase';
 import { useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { userData } from '../actions/index';
+import { userData, newPost } from '../actions/index';
 import { useSelector } from 'react-redux';
 
 function Main() {
@@ -19,6 +19,15 @@ function Main() {
 
 
   useEffect(() => {
+
+    // grab posts from global feed
+    db.collection('feedPosts').get().then((snapshot) => {
+      snapshot.forEach((doc) => {
+        dispatch(newPost(doc.data()));
+      });
+    });
+
+
     if(username === '' || username === undefined) {
       db.collection('users').doc(location.state.email).get().then((res) => {
         const dataToStore = {

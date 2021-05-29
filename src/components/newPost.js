@@ -1,74 +1,70 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { newPost } from '../actions/index';
 import fire from '../fire';
 
-class NewPost extends Component {
-  constructor(props) {
-    super(props);
-    this.jokeRef = React.createRef();
-    this.state = {
-      joke: '',
-      db: fire.firestore()
+function NewPost() {
+
+  const [post, setPost] = useState('');
+
+  const userData = useSelector(state => state.userData);
+  const dispatch = useDispatch();
+  const db = fire.firestore();
+
+  const postRef = React.useRef();
+
+  const newPostHandler = () => {
+
+    // obj gets created
+    let newPostObj = {
+      post: post,
+      username: userData.username,
+      email: userData.email,
+      likedUsers: [],
+      dislikedUsers: [],
+      score: 0,
+      ref: ''
     }
 
-    this.jokeHandler = this.jokeHandler.bind(this);
-    this.handleNewPost = this.handleNewPost.bind(this);
+    // post it to the global feed
+    db.collection('feedPosts').add({
+      post: post,
+      username: userData.username,
+      email: userData.email,
+      likedUsers: [],
+      dislikedUsers: [],
+      score: 0
+    }).then((ref) => {
+      newPostObj.ref = ref.id;
+      ref.set({ref: ref.id}, {merge: true});
+
+      // post it to users post list
+      db.collection('users').doc(userData.email).get().then((res) => {
+        let userPostArray = res.data().posts;
+        userPostArray.unshift(newPostObj);
+        console.log(userPostArray);
+        db.collection('users').doc(userData.email).set({posts: userPostArray}, {merge: true});
+      });
+    });
+    
+    // finally add it to the redux store
+    dispatch(newPost(newPostObj));
+
+    // clear post input bar
+    postRef.current.value = '';
   }
-  render() {
-    return (
-      <div className="new-post-container">
-        <p>Got Something to Say?</p>
-        <div className="joke-container">
-          <input ref={this.jokeRef} className="joke-input" type="text" onChange={this.jokeHandler}></input>
-          <div className="post button" onClick={this.handleNewPost}>Post</div>
-        </div>
-      </div>
-    );
-  }
+
   
 
-  jokeHandler(e) {
-    this.setState({joke: e.target.value});
-  }
-
-  async handleNewPost() {
-
-    // creating post obj
-    let jokeObj = {
-      post: this.state.joke,
-      score: 0,
-      username: this.props.userData.username,
-      email: this.props.userData.email,
-      ref: Math.random().toString(36).substr(2, 9),
-      likedUsers: [],
-      dislikedUsers: []
-    }
-
-    // dispatching obj to redux 
-    this.props.newPost(jokeObj);
-
-    // pushing it to total post feed
-    let resData = await this.state.db.collection('posts').doc('user').get();
-    resData = resData.data().posts;
-    resData.push(jokeObj);
-    this.state.db.collection('posts').doc('user').set({posts: resData});
-
-    // add post to user account
-    this.state.db.collection('users').doc(this.props.userData.email).get().then((res) => {
-      let postArray = res.data().posts;
-      postArray.unshift(jokeObj);
-      this.state.db.collection('users').doc(this.props.userData.email).set({posts: postArray}, {merge: true});
-    });
-
-    // reset values
-    this.setState({joke: ''});
-    this.jokeRef.current.value = '';
-  }
+  return (
+    <div className="new-post-container">
+      <p>Got Something to Say?</p>
+      <div className="joke-container">
+        <input className="joke-input" type="text" onChange={(e) => setPost(e.target.value)}></input>
+        <div ref={postRef} className="post button" onClick={newPostHandler}>Post</div>
+      </div>
+    </div>
+  );
 }
 
-const mapStateToProps = state => ({
-  userData: state.userData
-});
-
-export default connect(mapStateToProps, { newPost })(NewPost);
+export default NewPost;

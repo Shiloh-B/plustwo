@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { newPost } from '../actions/index';
 import fire from '../fire';
+import firebase from 'firebase';
 
 function NewPost() {
 
@@ -20,25 +21,20 @@ function NewPost() {
       post: post,
       username: userData.username,
       email: userData.email,
-      ref: ''
+      ref: '',
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
     }
 
     // post it to the global feed
-    db.collection('feedPosts').add({
+    db.collection('posts').add({
       post: post,
       username: userData.username,
-      email: userData.email
+      email: userData.email,
+      timestamp: newPostObj.timestamp
     }).then((ref) => {
       newPostObj.ref = ref.id;
       ref.set({ref: ref.id}, {merge: true});
 
-      // post it to users post list
-      db.collection('users').doc(userData.email).get().then((res) => {
-        let userPostArray = res.data().posts;
-        userPostArray.unshift(newPostObj);
-        console.log(userPostArray);
-        db.collection('users').doc(userData.email).set({posts: userPostArray}, {merge: true});
-      });
 
       // finally add it to the redux store
       dispatch(newPost(newPostObj));

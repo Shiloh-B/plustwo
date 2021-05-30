@@ -3,8 +3,8 @@ import Post from './post';
 import { useSelector } from 'react-redux';
 
 function Feed() {
-
-  const postArray = useSelector(state => state.newPost);
+  
+  let postArray = useSelector(state => state.newPost);
   const postList = postArray.map((post) => <Post post={post} key={post.ref} />);
 
   return (

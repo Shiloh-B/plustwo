@@ -9,6 +9,7 @@ function Post({post}) {
   const history = useHistory();
 
   const [isClicked, setIsClicked] = useState('');
+  const [localScore, setLocalScore] = useState(0);
 
   const email = useSelector(state => state.userData.email);
 
@@ -17,12 +18,31 @@ function Post({post}) {
     // setIsClicked
     vote === isClicked ? setIsClicked('') : setIsClicked(vote);
 
+    if(vote === isClicked) {
+      setIsClicked('');
+    }
+
     // creates vote document
     db.collection('postVotes').doc(post.ref + fire.auth().currentUser.uid).set({
       postRef: post.ref,
       votersEmaiL: post.email,
       vote: vote === isClicked ? '' : vote
     });
+
+    // evaluate local score
+    if(vote === isClicked && vote === 'liked' || vote === 'disliked' && vote !== isClicked) {
+      if(vote === 'disliked' && isClicked === 'liked') {
+        setLocalScore(localScore - 4);
+        return;
+      }
+      setLocalScore(localScore - 2);
+    } else if(vote === isClicked && vote === 'disliked' || vote === 'liked' && vote !== isClicked) {
+      if(vote === 'liked' && isClicked === 'disliked') {
+        setLocalScore(localScore + 4);
+        return;
+      }
+      setLocalScore(localScore + 2);
+    }
    
 
   }
@@ -46,6 +66,18 @@ function Post({post}) {
         setIsClicked(res.data().vote);
       }
     });
+
+    db.collection('postVotes').where('postRef', '==', post.ref).get().then((snapshot) => {
+      let tempScore = 0;
+      snapshot.forEach((doc) => {
+        if(doc.data().vote === 'liked') {
+          tempScore += 2;
+        } else if(doc.data().vote === 'disliked') {
+          tempScore -= 2;
+        }
+      });
+      setLocalScore(tempScore);
+    });
   }, []);
 
   return (
@@ -53,10 +85,10 @@ function Post({post}) {
       <div className="post-meta-container">
         <p className="meta-username" onClick={userAccountHandler}>{post.username}</p>
         {
-        post.score > 0 ? 
-        <p className="vote-total">+{post.score}</p> 
+        localScore > 0 ? 
+        <p className="vote-total">+{localScore}</p> 
         :
-        <p className="vote-total">{post.score}</p>
+        <p className="vote-total">{localScore}</p>
         }
       </div>
       <div className="post-joke-container">

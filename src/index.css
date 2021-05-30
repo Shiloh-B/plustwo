@@ -40,6 +40,17 @@ code {
   background-color: var(--slate-blue);
 }
 
+.button-clicked {
+  display: inline-block;
+  padding: 10px;
+  background-color: var(--slate-blue);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all .2s ease;
+  margin: .5em;
+  font-weight: bold
+}
+
 /* Login Page */
 
 .login-container {
@@ -122,6 +133,7 @@ code {
   margin: .25em 0em;
   grid-column: 2;
   text-align: center;
+  cursor: pointer;
 }
 
 .nav-bar h1 span {
@@ -178,8 +190,9 @@ code {
 /* Feed */
 .feed-container {
   margin: 0 auto;
+  margin-bottom: 1em;
+  max-height: 40em;
   width: 40%;
-  height: 600px;
   border: 2px solid var(--slate-blue);
   border-radius: 3px;
   background-color: var(--rich-black);
@@ -202,6 +215,7 @@ code {
   margin: .25em 0 0 0;
   font-weight: 600;
   text-align: left;
+  cursor: pointer;
 }
 
 .vote-total {
@@ -229,5 +243,38 @@ code {
 
 .vote-button {
   width: 50%;
+}
+
+/* bottom nav */
+
+.bottom-nav {
+  width: 100%;
+  background: var(--rich-black);
+  border-top: 2px solid var(--slate-blue);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* account page */
+
+.username-header {
+  text-align: center;
+}
+
+.user-post-container {
+  width: 40%;
+  margin: 0 auto;
+  margin-bottom: 1em;
+  border: 2px solid var(--slate-blue);
+  border-radius: 3px;
+  background-color: var(--rich-black);
+  padding: 10px;
+  min-height: 40em;
+}
+
+.user-post-container h2 {
+  text-align: center;
+  margin: 0;
 }
 

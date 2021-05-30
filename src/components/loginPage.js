@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react';
 import fire from '../fire';
 import Login from './login';
-import Main from './main';
+import { useHistory } from 'react-router-dom';
 
 function LoginPage() {
 
+  const history = useHistory();
+  const db = fire.firestore();
+
   const [user, setUser] = useState('');
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const [emailError, setEmailError] = useState('');
@@ -47,6 +51,17 @@ function LoginPage() {
   const handleSignup = () => {
     clearErrors();
     fire.auth().createUserWithEmailAndPassword(email, password)
+    .then((res) => {
+      console.log(username);
+      res.user.updateProfile({
+        displayName: username
+      });
+      db.collection('users').doc(email).set({
+        email: email,
+        username: username,
+        uid: fire.auth().currentUser.uid
+      });
+    })
     .catch(err => {
       switch(err.code) {
         case "auth/email-already-in-use":
@@ -62,16 +77,14 @@ function LoginPage() {
     });
   }
 
-  const handleLogout = () => {
-    clearErrors();
-    fire.auth().signOut();
-  }
-
   const authListener = () => {
     fire.auth().onAuthStateChanged(user => {
       if(user) {
-        clearInputs();
         setUser(user);
+        history.push({
+          pathname: '/plustwo'
+        });
+        clearInputs();
       } else {
         setUser('');
       }
@@ -84,11 +97,10 @@ function LoginPage() {
 
   return (
     <div>
-      {user ? (
-        <Main handleLogout={handleLogout} />
-      ) : (
-        <Login email={email} 
-        setEmail={setEmail} 
+      <Login email={email} 
+        setEmail={setEmail}
+        username={username}
+        setUsername={setUsername} 
         password={password} 
         setPassword={setPassword}
         handleLogin={handleLogin} 
@@ -97,7 +109,6 @@ function LoginPage() {
         setHasAccount={setHasAccount}
         emailError={emailError}
         passwordError={passwordError} />
-      )}
     </div>
     
   );

@@ -51,13 +51,15 @@ function LoginPage() {
   const handleSignup = () => {
     clearErrors();
     fire.auth().createUserWithEmailAndPassword(email, password)
-    .then(() => {
-      console.log(fire.auth().currentUser.uid);
+    .then((res) => {
+      console.log(username);
+      res.user.updateProfile({
+        displayName: username
+      });
       db.collection('users').doc(email).set({
         email: email,
         username: username,
-        uid: fire.auth().currentUser.uid,
-        posts: []
+        uid: fire.auth().currentUser.uid
       });
     })
     .catch(err => {
@@ -80,10 +82,7 @@ function LoginPage() {
       if(user) {
         setUser(user);
         history.push({
-          pathname: '/plustwo',
-          state: {
-            email: user.email
-          }
+          pathname: '/plustwo'
         });
         clearInputs();
       } else {

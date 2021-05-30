@@ -3,187 +3,104 @@ import fire from '../fire';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
-function Post({joke}) {
+function Post({post}) {
 
   const db = fire.firestore();
   const history = useHistory();
 
-  const [score, setScore] = useState(joke.score);
   const [isClicked, setIsClicked] = useState('');
+  const [localScore, setLocalScore] = useState(0);
 
   const email = useSelector(state => state.userData.email);
 
-  const scoreHandlerPlus = () => {
-    if(isClicked !== 'liked') {
-      setIsClicked('liked');
-      // locally changes score
-      setScore(score + 2);
+  const scoreHandler = (vote) => {
 
-      // changes global db value
-      db.collection('posts').doc('user').get().then((res) => {
-        let postArray = res.data().posts;
-        postArray.forEach((post) => {
-          if(post.ref === joke.ref) {
-            post.score = post.score + 2;
-            if(post.dislikedUsers.includes(email)) {
-              post.dislikedUsers.splice(email);
-            }
-            if(!post.likedUsers.includes(email)) {
-              post.likedUsers.push(email);
-            }
-          }
-        });
-        db.collection('posts').doc('user').set({posts: postArray});
-      });
+    // setIsClicked
+    vote === isClicked ? setIsClicked('') : setIsClicked(vote);
 
-      // add it to users liked posts list
-      db.collection('users').doc(joke.email).get().then((res) => {
-        let postArray = res.data().posts;
-        postArray.forEach((post) => {
-          if(post.ref === joke.ref) {
-            if(post.dislikedUsers.includes(email)) {
-              post.dislikedUsers.splice(email);
-            }
-            if(!post.likedUsers.includes(email)) {
-              post.likedUsers.push(email);
-            }
-            post.score = post.score + 2;
-          }
-        });
-        db.collection('users').doc(joke.email).set({posts: postArray}, {merge: true});
-      });
+    if(vote === isClicked) {
+      setIsClicked('');
     }
-  }
 
-  const scoreHandlerMinus = () => {
-    if(isClicked !== 'disliked') {
-      setIsClicked('disliked');
-      // locally changes score
-      setScore(score - 2);
+    // creates vote document
+    db.collection('postVotes').doc(post.ref + fire.auth().currentUser.uid).set({
+      postRef: post.ref,
+      votersEmaiL: post.email,
+      vote: vote === isClicked ? '' : vote
+    });
 
-       // changes global db value
-       db.collection('posts').doc('user').get().then((res) => {
-        let postArray = res.data().posts;
-        postArray.forEach((post) => {
-          if(post.ref === joke.ref) {
-            post.score = post.score - 2;
-            if(post.likedUsers.includes(email)) {
-              post.likedUsers.splice(email);
-            }
-            if(!post.dislikedUsers.includes(email)) {
-              post.dislikedUsers.push(email);
-            }
-          }
-        });
-        db.collection('posts').doc('user').set({posts: postArray});
-      });
+    // evaluate local score
+    if(vote === isClicked && vote === 'liked' || vote === 'disliked' && vote !== isClicked) {
+      if(vote === 'disliked' && isClicked === 'liked') {
+        setLocalScore(localScore - 4);
+        return;
+      }
+      setLocalScore(localScore - 2);
+    } else if(vote === isClicked && vote === 'disliked' || vote === 'liked' && vote !== isClicked) {
+      if(vote === 'liked' && isClicked === 'disliked') {
+        setLocalScore(localScore + 4);
+        return;
+      }
+      setLocalScore(localScore + 2);
+    }
+   
 
-      // add it to users disliked posts list
-      db.collection('users').doc(joke.email).get().then((res) => {
-        let postArray = res.data().posts;
-        postArray.forEach((post) => {
-          if(post.ref === joke.ref) {
-            if(post.likedUsers.includes(email)) {
-              post.likedUsers.splice(email);
-            }
-            if(!post.dislikedUsers.includes(email)) {
-              post.dislikedUsers.push(email);
-            }
-            post.score = post.score - 2;
-          }
-        });
-        db.collection('users').doc(joke.email).set({posts: postArray}, {merge: true});
-      });
-    }    
   }
 
   const userAccountHandler = () => {
-    db.collection('users').doc(joke.email).get().then((res) => {
+    db.collection('users').doc(post.email).get().then((res) => {
       let uid = res.data().uid;
       history.push({
-        pathname: `/plustwo/${joke.username}/${uid}`,
+        pathname: `/plustwo/${post.username}/${uid}`,
         state: {
-          email: joke.email,
-          username: joke.username
+          email: post.email,
+          username: post.username
         }
       });
     });
   }
 
   useEffect(() => {
-    if(joke.likedUsers.includes(email)) {
-      setIsClicked('liked');
-    } else if(joke.dislikedUsers.includes(email)) {
-      setIsClicked('disliked');
-    }
-  });
+    db.collection('postVotes').doc(post.ref + fire.auth().currentUser.uid).get().then((res) => {
+      if(res.exists) {
+        setIsClicked(res.data().vote);
+      }
+    });
 
-  if(isClicked === 'liked') {
-    return (
-      <div className="post-container">
-        <div className="post-meta-container">
-          <p className="meta-username">{joke.username}</p>
-          {
-          score > 0 ? 
-          <p className="vote-total">+{score}</p> 
-          :
-          <p className="vote-total">{score}</p>
-          }
-        </div>
-        <div className="post-joke-container">
-          <h1>{joke.post}</h1>
-        </div>
-        <div className="voting-container">
-          <div className="button-clicked vote-button">+2</div>
-          <div className="button vote-button" onClick={scoreHandlerMinus}>-2</div>
-        </div>
-      </div>
-    );
-  } else if(isClicked ==='disliked') {
-    return (
-      <div className="post-container">
-        <div className="post-meta-container">
-          <p className="meta-username">{joke.username}</p>
-          {
-          score > 0 ? 
-          <p className="vote-total">+{score}</p> 
-          :
-          <p className="vote-total">{score}</p>
-          }
-        </div>
-        <div className="post-joke-container">
-          <h1>{joke.post}</h1>
-        </div>
-        <div className="voting-container">
-          <div className="button vote-button" onClick={scoreHandlerPlus}>+2</div>
-          <div className="button-clicked vote-button">-2</div>
-        </div>
-      </div>
-    );
-  } else {
-    return (
-      <div className="post-container">
-        <div className="post-meta-container">
-          <p className="meta-username" onClick={userAccountHandler}>{joke.username}</p>
-          {
-          score > 0 ? 
-          <p className="vote-total">+{score}</p> 
-          :
-          <p className="vote-total">{score}</p>
-          }
-        </div>
-        <div className="post-joke-container">
-          <h1>{joke.post}</h1>
-        </div>
-        <div className="voting-container">
-          <div className="button vote-button" onClick={scoreHandlerPlus}>+2</div>
-          <div className="button vote-button" onClick={scoreHandlerMinus}>-2</div>
-        </div>
-      </div>
-     
-    );
-  }
+    db.collection('postVotes').where('postRef', '==', post.ref).get().then((snapshot) => {
+      let tempScore = 0;
+      snapshot.forEach((doc) => {
+        if(doc.data().vote === 'liked') {
+          tempScore += 2;
+        } else if(doc.data().vote === 'disliked') {
+          tempScore -= 2;
+        }
+      });
+      setLocalScore(tempScore);
+    });
+  }, []);
 
+  return (
+    <div className="post-container">
+      <div className="post-meta-container">
+        <p className="meta-username" onClick={userAccountHandler}>{post.username}</p>
+        {
+        localScore > 0 ? 
+        <p className="vote-total">+{localScore}</p> 
+        :
+        <p className="vote-total">{localScore}</p>
+        }
+      </div>
+      <div className="post-joke-container">
+        <h1>{post.post}</h1>
+      </div>
+      
+      <div className="voting-container">
+        <div className={`${isClicked === 'liked' ? "button-clicked" : "button"} vote-button`} onClick={(vote) => scoreHandler('liked')}>+2</div>
+        <div className={`${isClicked === 'disliked' ? "button-clicked" : "button"} vote-button`} onClick={(vote) => scoreHandler('disliked')}>-2</div>
+      </div>
+    </div>
+  );
   
 }
 

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Nav from './nav';
 import NewPost from './newPost';
 import BottomNav from './bottomNav';
@@ -6,19 +6,21 @@ import Feed from './feed';
 import fire from 'firebase';
 import { useDispatch } from 'react-redux';
 import { userData, newPost } from '../actions/index';
-import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 function Main() {
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const dispatch = useDispatch();
   const history = useHistory();
   const db = fire.firestore();
-  const grabbedUserData = useSelector(state => state.userData);
   const route = 'My Account'
 
 
   useEffect(() => {
+
+    setIsLoading(true);
 
     // dispatch account details to redux
     fire.auth().onAuthStateChanged((user) => {
@@ -34,18 +36,18 @@ function Main() {
       snapshot.forEach((doc) => {
         dispatch(newPost(doc.data()));
       });
+      setIsLoading(false);
     });
-    
-
-    
   }, []);
 
   return (
-    <div>
-      <Nav />
-      <NewPost />
-      <Feed />
-      <BottomNav route={route}/>
+    <div className="content-body">
+      <div className="content">
+        <Nav />
+        <NewPost />
+        <Feed isLoading={isLoading} />
+      </div>
+      <BottomNav isLoading={isLoading} route={route}/>
     </div>
   );
 }

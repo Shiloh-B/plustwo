@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { newPost } from '../actions/index';
 import fire from '../fire';
 
-function BottomNav({route}) {
+function BottomNav(props) {
 
   const history = useHistory();
   const dispatch = useDispatch();
@@ -12,15 +12,16 @@ function BottomNav({route}) {
 
   const routeHandler = () => {
     dispatch(newPost([]));
-    if(route === 'My Account') {
+    if(props.route === 'My Account') {
       history.push({
         pathname: `/plustwo/${username}/${fire.auth().currentUser.uid}`,
         state: {
           email: fire.auth().currentUser.email,
-          username: username
+          username: username,
+          isLoading: props.isLoading
         }
       });
-    } else if(route === "Home") {
+    } else if(props.route === "Home") {
       history.push({
         pathname: '/plustwo',
         state: {
@@ -32,7 +33,7 @@ function BottomNav({route}) {
 
   return (
     <div className="bottom-nav">
-      <div className="account-button button" onClick={routeHandler}>{route}</div>
+      <div className="account-button button" onClick={routeHandler}>{props.route}</div>
     </div>
   );
 }

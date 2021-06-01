@@ -22,6 +22,7 @@ function BottomNav(props) {
         }
       });
     } else if(props.route === "Home") {
+      dispatch(newPost([]));
       history.push({
         pathname: '/plustwo',
         state: {

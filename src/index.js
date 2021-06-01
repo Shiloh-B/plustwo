@@ -6,6 +6,13 @@ import reportWebVitals from './reportWebVitals';
 import { createStore } from 'redux';
 import rootReducer from './reducers';
 import { Provider } from 'react-redux';
+import Filter from 'bad-words';
+//import fs from 'fs';
+import badWordArrayFile from './bad-words-list.txt';
+
+// let badWordArray = fs.readFileSync(badWordArrayFile).toString().split('\n');
+// const filter = new Filter();
+// console.log(badWordArray);
 
 // redux store
 const store = createStore(rootReducer,

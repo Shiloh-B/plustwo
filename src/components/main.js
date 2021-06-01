@@ -11,6 +11,7 @@ import { useHistory } from 'react-router-dom';
 function Main() {
 
   const [isLoading, setIsLoading] = useState(false);
+  const [accountData, setAccountData] = useState({});
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -25,14 +26,25 @@ function Main() {
     // dispatch account details to redux
     fire.auth().onAuthStateChanged((user) => {
       if(user !== null) {
-        dispatch(userData({email: user.email, username: user.displayName}));
+        db.collection('users').doc(user.email).get().then((res) => {
+          try {
+            dispatch(userData({email: user.email, username: res.data().username}));
+            setAccountData({
+              email: user.email,
+              username: res.data().username
+            });
+          } catch {
+            history.push('/');
+            alert('Oops! Something went wrong! Please try to login again.');
+          }
+        });
       } else {
         history.push('/');
       }
     });
 
     // grab posts from global feed sorted by timestamp
-    db.collection('posts').orderBy('timestamp').limit(20).get().then((snapshot) => {
+    db.collection('posts').orderBy('timestamp').get().then((snapshot) => {
       snapshot.forEach((doc) => {
         dispatch(newPost(doc.data()));
       });
@@ -47,7 +59,7 @@ function Main() {
         <NewPost />
         <Feed isLoading={isLoading} />
       </div>
-      <BottomNav isLoading={isLoading} route={route}/>
+      <BottomNav accountData={accountData} isLoading={isLoading} route={route}/>
     </div>
   );
 }

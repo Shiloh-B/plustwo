@@ -48,7 +48,6 @@ function Login(props) {
           <label>Username</label>
           <input type="text" className="username" autoFocus required value={username} 
           onChange={e => setUsername(e.target.value)}></input>
-          <p className="error-message">{emailError}</p>
           <label>Password</label>
           <input type="password" className="password" required value={password}
           onChange={e => setPassword(e.target.value)}></input>

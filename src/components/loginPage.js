@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import fire from '../fire';
 import Login from './login';
 import { useHistory } from 'react-router-dom';
+import Filter from 'bad-words';
 
 function LoginPage() {
 
   const history = useHistory();
   const db = fire.firestore();
+  const filter = new Filter();
 
   const [user, setUser] = useState('');
   const [email, setEmail] = useState('');
@@ -50,12 +52,18 @@ function LoginPage() {
 
   const handleSignup = () => {
     clearErrors();
+    if(filter.isProfane(email) || filter.isProfane(username)) {
+      alert('You need to pick a new username or email.');
+      return;
+    }
     fire.auth().createUserWithEmailAndPassword(email, password)
     .then((res) => {
-      console.log(username);
       res.user.updateProfile({
         displayName: username
+      }).catch((err) => {
+        console.log(err);
       });
+
       db.collection('users').doc(email).set({
         email: email,
         username: username,

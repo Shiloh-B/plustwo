@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { userData } from '../actions/index';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import Loading from '../components/loading';
 import fire from '../fire';
 import UserPost from './userPost';
@@ -12,10 +12,11 @@ function AccountPage() {
 
   const [userPosts, setUserPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const currentUserData = useSelector(state => state.userData);
+  const userDataFetched = useSelector(state => state.userData);
   const dispatch = useDispatch();
   const db = fire.firestore();
   const history = useHistory();
+  const location = useLocation();
   const route = 'Home';
 
 
@@ -28,8 +29,8 @@ function AccountPage() {
         // dispatch account details to redux
         dispatch(userData({email: user.email, username: user.displayName}));
 
-        // grab users posts
-        db.collection('posts').where('email', '==', user.email).get().then((snapshot) => {
+        // grab users posts - waiting for composite index to built to order by timestamp
+        db.collection('posts').where('email', '==', location.state.email).orderBy('timestamp', 'desc').get().then((snapshot) => {
           if(!snapshot) {
             return;
           }
@@ -49,14 +50,13 @@ function AccountPage() {
   }, []);
 
   const userPostsToRender = userPosts.map((post, idx) => <UserPost post={post} key={idx}/>);
-
   return (
     <div className="content-body">
       <div className="content">
         <Nav />
-        <h1 className="username-header">{currentUserData.username}</h1>
-        <div className="user-post-container">
-          <h2>{currentUserData.username}'s Posts</h2>
+        <h1 className="username-header">{location.state.username}</h1>
+        <div className="feed-container">
+          <h2>{location.state.username}'s Posts</h2>
           <div>
             {
               isLoading ? <Loading /> : userPostsToRender

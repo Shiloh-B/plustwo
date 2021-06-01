@@ -48,6 +48,7 @@ code {
   transition: all .2s ease;
   margin: .5em;
   font-weight: bold;
+  user-select: none;
 }
 
 .button:hover {
@@ -62,7 +63,8 @@ code {
   cursor: pointer;
   transition: all .2s ease;
   margin: .5em;
-  font-weight: bold
+  font-weight: bold;
+  border: 2px solid var(--slate-blue);
 }
 
 .loading-spinner {
@@ -290,21 +292,5 @@ code {
 
 .username-header {
   text-align: center;
-}
-
-.user-post-container {
-  width: 40%;
-  margin: 0 auto;
-  margin-bottom: 1em;
-  border: 2px solid var(--slate-blue);
-  border-radius: 3px;
-  background-color: var(--rich-black);
-  padding: 10px;
-  flex-grow: 1;
-}
-
-.user-post-container h2 {
-  text-align: center;
-  margin: 0;
 }
 

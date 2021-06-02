@@ -7,6 +7,7 @@ import fire from 'firebase';
 import { useDispatch } from 'react-redux';
 import { userData, newPost } from '../actions/index';
 import { useHistory } from 'react-router-dom';
+import Filter from 'bad-words';
 
 function Main() {
 
@@ -17,10 +18,8 @@ function Main() {
   const history = useHistory();
   const db = fire.firestore();
   const route = 'My Account'
-
-
+  
   useEffect(() => {
-
     setIsLoading(true);
 
     // dispatch account details to redux

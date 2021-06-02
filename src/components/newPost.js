@@ -8,11 +8,20 @@ import Filter from 'bad-words';
 function NewPost() {
 
   const [post, setPost] = useState('');
+  const [lastPostedTime, setLastPostedTime] = useState(0);
 
   const userData = useSelector(state => state.userData);
   const dispatch = useDispatch();
   const db = fire.firestore();
   const filter = new Filter();
+  const badWordsArray = [
+    'ch1nk',
+    'cummies',
+    'nigg',
+    'crackwhore',
+    'beaner',
+  ]
+  filter.addWords(...badWordsArray);
 
   const postRef = useRef(null);
 
@@ -24,38 +33,45 @@ function NewPost() {
       return;
     }
 
-    setTimeout(() => {
-      // obj gets created
-      let newPostObj = {
-        post: filter.clean(post),
-        username: userData.username,
-        email: userData.email,
-        ref: '',
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      }
+    if(new Date() - lastPostedTime < 10000) {
+      alert('You posted too recently!');
+      return;
+    }
 
-      // post it to the global feed
-      db.collection('posts').add({
-        post: filter.clean(post),
-        username: userData.username,
-        email: userData.email,
-        timestamp: newPostObj.timestamp
-      }).then((ref) => {
-        newPostObj.ref = ref.id;
-        ref.set({ref: ref.id}, {merge: true});
+    // set lastPosted time
+    setLastPostedTime(new Date());
 
+    
+    // obj gets created
+    let newPostObj = {
+      post: filter.clean(post),
+      username: userData.username,
+      email: userData.email,
+      ref: '',
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }
 
-        // finally add it to the redux store
-        dispatch(newPost(newPostObj));
-      });
+    // post it to the global feed
+    db.collection('posts').add({
+      post: filter.clean(post),
+      username: userData.username,
+      email: userData.email,
+      timestamp: newPostObj.timestamp
+    }).then((ref) => {
+      newPostObj.ref = ref.id;
+      ref.set({ref: ref.id}, {merge: true});
 
-      
-      
+      // finally add it to the redux store
+      dispatch(newPost(newPostObj));
+    });
 
-      // clear post input bar
-      postRef.current.value = '';
-      setPost('');
-    }, 200);
+    
+    
+
+    // clear post input bar
+    postRef.current.value = '';
+    setPost('');
+    
 
     
   }

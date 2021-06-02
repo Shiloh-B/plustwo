@@ -32,6 +32,23 @@ function BottomNav(props) {
     }
   }
 
+  const mostRecentPostsHandler = () => {
+    props.mostRecentPostsHandler();
+  }
+
+  const mostLikedPostsHandler = () => {
+    props.mostLikedPostsHandler();
+  }
+
+  if(props.route === 'My Account') {
+    return (
+    <div className="bottom-nav">
+      <div className={props.sortBy ? "button-clicked" : "button"} onClick={mostRecentPostsHandler}>Recent Posts</div>
+      <div className="account-button button" onClick={routeHandler}>{props.route}</div>
+      <div className={props.sortBy ? "button" : "button-clicked"} onClick={mostLikedPostsHandler}>Most Liked Posts</div>
+    </div>
+    );
+  }
   return (
     <div className="bottom-nav">
       <div className="account-button button" onClick={routeHandler}>{props.route}</div>

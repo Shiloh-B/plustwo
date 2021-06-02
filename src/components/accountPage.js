@@ -56,7 +56,6 @@ function AccountPage() {
         <Nav />
         <h1 className="username-header">{location.state.username}</h1>
         <div className="feed-container">
-          <h2>{location.state.username}'s Posts</h2>
           <div>
             {
               isLoading ? <Loading /> : userPostsToRender

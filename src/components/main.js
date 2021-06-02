@@ -7,12 +7,12 @@ import fire from 'firebase';
 import { useDispatch } from 'react-redux';
 import { userData, newPost } from '../actions/index';
 import { useHistory } from 'react-router-dom';
-import Filter from 'bad-words';
 
 function Main() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [accountData, setAccountData] = useState({});
+  const [sortBy, setSortBy] = useState(true);
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -42,6 +42,7 @@ function Main() {
       }
     });
 
+    
     // grab posts from global feed sorted by timestamp
     db.collection('posts').orderBy('timestamp').get().then((snapshot) => {
       snapshot.forEach((doc) => {
@@ -49,7 +50,39 @@ function Main() {
       });
       setIsLoading(false);
     });
+    
+    
   }, []);
+
+  const mostLikedPostsHandler = () => {
+    setSortBy(false);
+    setIsLoading(true);
+    db.collection('postVotes').where('vote', '==', 'liked').get().then((snapshot) => {
+      let reducedPostRefArray = [];
+      snapshot.forEach((doc) => {
+        reducedPostRefArray.push(doc.data().postRef);
+      });
+      let counts = {};
+      reducedPostRefArray.forEach((post) => {
+        counts[post] = counts[post] ? counts[post] + 1 : 1;
+      });
+      console.log(counts);
+      setIsLoading(false);
+    });
+  }
+
+  const mostRecentPostsHandler = () => {
+    dispatch(newPost([]));
+    setSortBy(true);
+    setIsLoading(true);
+    // grab posts from global feed sorted by timestamp
+    db.collection('posts').orderBy('timestamp').get().then((snapshot) => {
+      snapshot.forEach((doc) => {
+        dispatch(newPost(doc.data()));
+      });
+      setIsLoading(false);
+    });
+  }
 
   return (
     <div className="content-body">
@@ -58,7 +91,13 @@ function Main() {
         <NewPost />
         <Feed isLoading={isLoading} />
       </div>
-      <BottomNav accountData={accountData} isLoading={isLoading} route={route}/>
+      <BottomNav
+        accountData={accountData} 
+        isLoading={isLoading} 
+        route={route}
+        mostLikedPostsHandler={mostLikedPostsHandler}
+        mostRecentPostsHandler={mostRecentPostsHandler}
+      />
     </div>
   );
 }

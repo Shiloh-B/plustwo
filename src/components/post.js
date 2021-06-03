@@ -25,18 +25,18 @@ function Post({post}) {
     // creates vote document
     db.collection('postVotes').doc(post.ref + fire.auth().currentUser.uid).set({
       postRef: post.ref,
-      votersEmaiL: post.email,
+      votersUid: post.uid,
       vote: vote === isClicked ? '' : vote
     });
 
     // evaluate local score
-    if(vote === isClicked && vote === 'liked' || vote === 'disliked' && vote !== isClicked) {
+    if((vote === isClicked && vote === 'liked') || (vote === 'disliked' && vote !== isClicked)) {
       if(vote === 'disliked' && isClicked === 'liked') {
         setLocalScore(localScore - 4);
         return;
       }
       setLocalScore(localScore - 2);
-    } else if(vote === isClicked && vote === 'disliked' || vote === 'liked' && vote !== isClicked) {
+    } else if((vote === isClicked && vote === 'disliked') || (vote === 'liked' && vote !== isClicked)) {
       if(vote === 'liked' && isClicked === 'disliked') {
         setLocalScore(localScore + 4);
         return;
@@ -48,12 +48,11 @@ function Post({post}) {
   }
 
   const userAccountHandler = () => {
-    db.collection('users').doc(post.email).get().then((res) => {
-      let uid = res.data().uid;
+    db.collection('users').doc(post.uid).get().then((res) => {
       history.push({
-        pathname: `/plustwo/${post.username}/${uid}`,
+        pathname: `/plustwo/${post.username}/${post.uid}`,
         state: {
-          email: post.email,
+          email: fire.auth().currentUser.email,
           username: post.username
         }
       });

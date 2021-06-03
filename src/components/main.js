@@ -66,7 +66,7 @@ function Main() {
       reducedPostRefArray.forEach((post) => {
         counts[post] = counts[post] ? counts[post] + 1 : 1;
       });
-      console.log(counts);
+      
       setIsLoading(false);
     });
   }
@@ -95,6 +95,7 @@ function Main() {
         accountData={accountData} 
         isLoading={isLoading} 
         route={route}
+        sortBy={sortBy}
         mostLikedPostsHandler={mostLikedPostsHandler}
         mostRecentPostsHandler={mostRecentPostsHandler}
       />

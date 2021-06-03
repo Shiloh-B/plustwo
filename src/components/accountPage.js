@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { userData } from '../actions/index';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import Loading from '../components/loading';
 import fire from '../fire';
 import UserPost from './userPost';
@@ -12,16 +12,15 @@ function AccountPage() {
 
   const [userPosts, setUserPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const userDataFetched = useSelector(state => state.userData);
+  const [accountUsername, setAccountUsername] = useState('');
   const dispatch = useDispatch();
   const db = fire.firestore();
   const history = useHistory();
-  const location = useLocation();
   const route = 'Home';
+  const { uid } = useParams();
 
 
   useEffect(() => {
-    
     setIsLoading(true);
     // make sure we wait for the user auth callback to arrive
     fire.auth().onAuthStateChanged((user) => {
@@ -30,19 +29,23 @@ function AccountPage() {
         dispatch(userData({email: user.email, username: user.displayName}));
 
         // grab users posts - waiting for composite index to built to order by timestamp
-        db.collection('posts').where('email', '==', location.state.email).orderBy('timestamp', 'desc').get().then((snapshot) => {
-          if(!snapshot) {
+        db.collection('posts').where('uid', '==', uid).orderBy('timestamp', 'desc').get().then((snapshot) => {
+          if(snapshot.empty) {
+            history.push('/oops');
             return;
           }
           let tempUserPosts = [];
           snapshot.forEach((doc) => {
             tempUserPosts.push(doc.data());
+            setAccountUsername(doc.data().username);
           });
           setUserPosts(tempUserPosts);
           setIsLoading(false);
+        }).catch((err) => {
+          history.push('/oops');
         });
       } else {
-        history.push('/');
+        history.push('/oops');
       }
     });
 
@@ -54,7 +57,7 @@ function AccountPage() {
     <div className="content-body">
       <div className="content">
         <Nav />
-        <h1 className="username-header">{location.state.username}</h1>
+        <h1 className="username-header">{accountUsername}</h1>
         <div className="feed-container">
           <div>
             {

@@ -22,7 +22,7 @@ function Post({post}) {
     // creates vote document
     db.collection('postVotes').doc(post.ref + fire.auth().currentUser.uid).set({
       postRef: post.ref,
-      votersEmaiL: post.email,
+      votersUid: post.uid,
       vote: vote === isClicked ? '' : vote
     });
 
@@ -45,12 +45,11 @@ function Post({post}) {
   }
 
   const userAccountHandler = () => {
-    db.collection('users').doc(post.email).get().then((res) => {
-      let uid = res.data().uid;
+    db.collection('users').doc(post.uid).get().then((res) => {
       history.push({
-        pathname: `/plustwo/${post.username}/${uid}`,
+        pathname: `/plustwo/${post.username}/${post.uid}`,
         state: {
-          email: post.email,
+          email: fire.auth().currentUser.email,
           username: post.username
         }
       });

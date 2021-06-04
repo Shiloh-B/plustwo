@@ -298,3 +298,73 @@ code {
   margin-top: 0;
 }
 
+/* Error Component */
+
+.error-container {
+  text-align: center;
+  width: 70%;
+  margin: 0 auto;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+/* media queries */
+
+@media screen and (max-width: 768px) {
+  .post-joke-container {
+    font-size: .75em;
+  }
+
+  .button, .button-clicked {
+    font-size: .75em;
+  }
+
+  .vote-button, .logout {
+    font-size: 1em;
+  }
+
+  .joke-input {
+    font-size: 1em;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .nav-bar {
+    display: block;
+  }
+
+  .nav-bar h1 {
+    margin-bottom: 0;
+  }
+
+  .grid-column {
+    display: block;
+    margin: 0 auto;
+    width: 25%;
+    text-align: center;
+  }
+
+  .logout {
+    font-size: .75em;
+    padding: 7px;
+    margin-top: 0px;
+  }
+
+  .joke-input {
+    font-size: .75em;
+  }
+
+  .post-joke-container h1 {
+    font-size: 1.25em;
+  }
+
+  .post-meta-container {
+    font-size: .75em;
+  }
+
+  .vote-button {
+    padding: 5px;
+  }
+}

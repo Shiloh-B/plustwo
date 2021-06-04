@@ -46,7 +46,7 @@ function NewPost() {
     let newPostObj = {
       post: filter.clean(post),
       username: userData.username,
-      email: userData.email,
+      uid: fire.auth().currentUser.uid,
       ref: '',
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     }
@@ -55,7 +55,7 @@ function NewPost() {
     db.collection('posts').add({
       post: filter.clean(post),
       username: userData.username,
-      email: userData.email,
+      uid: fire.auth().currentUser.uid,
       timestamp: newPostObj.timestamp
     }).then((ref) => {
       newPostObj.ref = ref.id;

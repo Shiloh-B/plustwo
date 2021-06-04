@@ -22,6 +22,7 @@ function LoginPage() {
   const clearInputs = () => {
     setEmail('');
     setPassword('');
+    setUsername('');
   }
 
   const clearErrors = () => {
@@ -46,6 +47,8 @@ function LoginPage() {
         case "auth/wrong-password":
           setPasswordError(err.message);
           break;
+          default:
+            break;
       }
     });
   }
@@ -101,7 +104,7 @@ function LoginPage() {
 
   useEffect(() => {
     authListener();
-  }, []);
+  }, [authListener]);
 
   return (
     <div>
@@ -116,7 +119,9 @@ function LoginPage() {
         hasAccount={hasAccount}
         setHasAccount={setHasAccount}
         emailError={emailError}
-        passwordError={passwordError} />
+        passwordError={passwordError}
+        clearErrors={clearErrors}
+        clearInputs={clearInputs} />
     </div>
     
   );

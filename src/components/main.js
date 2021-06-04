@@ -61,21 +61,12 @@ function Main() {
     db.collection('postVotes').where('vote', '==', 'liked').get().then((snapshot) => {
       let likedPostsArray = [];
       snapshot.forEach((doc) => {
-        if(likedPostsArray[doc.data().postRef]) {
-          likedPostsArray[doc.data().postRef].count++;
-        } else {
-          likedPostsArray[doc.data().postRef] = {postRef: doc.data().postRef, count: 1};
-        }
-      })
-      likedPostsArray.sort((a, b) => b.count - a.count);
-      // attempt to grab first 20 of the top liked
-      let topLikedArray = [];
-      for(let i = 0; i <= 20; i++) {
-        db.collection('posts').doc(likedPostsArray[i].postRef).get().then((res) => {
-          topLikedArray.push(res.data());
-        });
-      }
-      dispatch(newPost(topLikedArray));
+        reducedPostRefArray.push(doc.data().postRef);
+      });
+      let counts = {};
+      reducedPostRefArray.forEach((post) => {
+        counts[post] = counts[post] ? counts[post] + 1 : 1;
+      });
       
       setIsLoading(false);
     }).catch((err) => {

@@ -5,9 +5,15 @@ import { useDispatch } from 'react-redux';
 function Login(props) {
 
   const { email, setEmail, password, setPassword, handleLogin, handleSignup, hasAccount, setHasAccount,
-  emailError, passwordError, username, setUsername } = props;
+  emailError, passwordError, username, setUsername, clearErrors, clearInputs } = props;
 
   const dispatch = useDispatch();
+
+  const handleHasAccount = () => {
+    setHasAccount(!hasAccount);
+    clearErrors();
+    clearInputs();
+  }
 
   useEffect(() => {
     if(!hasAccount) {
@@ -32,7 +38,7 @@ function Login(props) {
         <div className="submition-container">
           <div className="button login-button" onClick={handleLogin}>Login</div>
           <p>Don't have an account?</p>
-          <div className="button login-button" onClick={() => setHasAccount(!hasAccount)}>Sign Up</div>
+          <div className="button login-button" onClick={() => handleHasAccount()}>Sign Up</div>
         </div>
       </div>
     );
@@ -56,7 +62,7 @@ function Login(props) {
         <div className="submition-container">
           <div className="button login-button" onClick={handleSignup}>Sign Up</div>
           <p>Already have an account?</p>
-          <div className="button login-button" onClick={() => setHasAccount(!hasAccount)}>Login</div>
+          <div className="button login-button" onClick={() => handleHasAccount()}>Login</div>
         </div>
       </div>
     );

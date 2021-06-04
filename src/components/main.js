@@ -21,6 +21,7 @@ function Main() {
   
   useEffect(() => {
     setIsLoading(true);
+    dispatch(newPost([]));
 
     // dispatch account details to redux
     fire.auth().onAuthStateChanged((user) => {
@@ -58,16 +59,27 @@ function Main() {
     setSortBy(false);
     setIsLoading(true);
     db.collection('postVotes').where('vote', '==', 'liked').get().then((snapshot) => {
-      let reducedPostRefArray = [];
+      let likedPostsArray = [];
       snapshot.forEach((doc) => {
-        reducedPostRefArray.push(doc.data().postRef);
-      });
-      let counts = {};
-      reducedPostRefArray.forEach((post) => {
-        counts[post] = counts[post] ? counts[post] + 1 : 1;
-      });
-      console.log(counts);
+        if(likedPostsArray[doc.data().postRef]) {
+          likedPostsArray[doc.data().postRef].count++;
+        } else {
+          likedPostsArray[doc.data().postRef] = {postRef: doc.data().postRef, count: 1};
+        }
+      })
+      likedPostsArray.sort((a, b) => b.count - a.count);
+      // attempt to grab first 20 of the top liked
+      let topLikedArray = [];
+      for(let i = 0; i <= 20; i++) {
+        db.collection('posts').doc(likedPostsArray[i].postRef).get().then((res) => {
+          topLikedArray.push(res.data());
+        });
+      }
+      dispatch(newPost(topLikedArray));
+      
       setIsLoading(false);
+    }).catch((err) => {
+      console.log(err);
     });
   }
 
@@ -95,6 +107,7 @@ function Main() {
         accountData={accountData} 
         isLoading={isLoading} 
         route={route}
+        sortBy={sortBy}
         mostLikedPostsHandler={mostLikedPostsHandler}
         mostRecentPostsHandler={mostRecentPostsHandler}
       />

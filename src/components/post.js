@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import fire from '../fire';
-import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 function Post({post}) {
@@ -10,8 +9,6 @@ function Post({post}) {
 
   const [isClicked, setIsClicked] = useState('');
   const [localScore, setLocalScore] = useState(0);
-
-  const email = useSelector(state => state.userData.email);
 
   const scoreHandler = (vote) => {
 
@@ -30,13 +27,13 @@ function Post({post}) {
     });
 
     // evaluate local score
-    if(vote === isClicked && vote === 'liked' || vote === 'disliked' && vote !== isClicked) {
+    if((vote === isClicked && vote === 'liked') || (vote === 'disliked' && vote !== isClicked)) {
       if(vote === 'disliked' && isClicked === 'liked') {
         setLocalScore(localScore - 4);
         return;
       }
       setLocalScore(localScore - 2);
-    } else if(vote === isClicked && vote === 'disliked' || vote === 'liked' && vote !== isClicked) {
+    } else if((vote === isClicked && vote === 'disliked') || (vote === 'liked' && vote !== isClicked)) {
       if(vote === 'liked' && isClicked === 'disliked') {
         setLocalScore(localScore + 4);
         return;

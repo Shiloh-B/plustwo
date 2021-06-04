@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import fire from '../fire';
 import { useHistory } from 'react-router-dom';
+import firebase from 'firebase';
 
 function Post({post}) {
 
@@ -10,36 +11,31 @@ function Post({post}) {
   const [isClicked, setIsClicked] = useState('');
   const [localScore, setLocalScore] = useState(0);
 
+  const voteMap = new Map();
+  voteMap.set('liked', {value: 2});
+  voteMap.set('disliked', {value: -2});
+  voteMap.set('', {value: 0});
+
+
   const scoreHandler = (vote) => {
+    let incomingVote = vote === isClicked ? '' : vote;
+    let diff = voteMap.get(incomingVote).value - voteMap.get(isClicked).value;
+    const updateScore = firebase.firestore.FieldValue.increment(diff);
 
-    // setIsClicked
+    // setIsClicked and localscore
+    setIsClicked(incomingVote);
+    setLocalScore(localScore + diff);
     vote === isClicked ? setIsClicked('') : setIsClicked(vote);
-
-    if(vote === isClicked) {
-      setIsClicked('');
-    }
-
+    
     // creates vote document
     db.collection('postVotes').doc(post.ref + fire.auth().currentUser.uid).set({
       postRef: post.ref,
       votersUid: post.uid,
-      vote: vote === isClicked ? '' : vote
+      vote: incomingVote
     });
 
-    // evaluate local score
-    if((vote === isClicked && vote === 'liked') || (vote === 'disliked' && vote !== isClicked)) {
-      if(vote === 'disliked' && isClicked === 'liked') {
-        setLocalScore(localScore - 4);
-        return;
-      }
-      setLocalScore(localScore - 2);
-    } else if((vote === isClicked && vote === 'disliked') || (vote === 'liked' && vote !== isClicked)) {
-      if(vote === 'liked' && isClicked === 'disliked') {
-        setLocalScore(localScore + 4);
-        return;
-      }
-      setLocalScore(localScore + 2);
-    }
+    // sets the score on the post
+    db.collection('posts').doc(post.ref).set({score: updateScore}, {merge: true});
    
 
   }
@@ -57,22 +53,29 @@ function Post({post}) {
   }
 
   useEffect(() => {
-    db.collection('postVotes').doc(post.ref + fire.auth().currentUser.uid).get().then((res) => {
-      if(res.exists) {
-        setIsClicked(res.data().vote);
+    fire.auth().onAuthStateChanged(user => {
+      if(user !== null) {
+        db.collection('postVotes').doc(post.ref + user.uid).get().then((res) => {
+          if(res.exists) {
+            setIsClicked(res.data().vote);
+          }
+        });
+    
+        db.collection('postVotes').where('postRef', '==', post.ref).get().then((snapshot) => {
+          let tempScore = 0;
+          snapshot.forEach((doc) => {
+            if(doc.data().vote === 'liked') {
+              tempScore += 2;
+            } else if(doc.data().vote === 'disliked') {
+              tempScore -= 2;
+            }
+          });
+          setLocalScore(tempScore);
+        });
+      } else {
+        history.push('/oops');
       }
-    });
-
-    db.collection('postVotes').where('postRef', '==', post.ref).get().then((snapshot) => {
-      let tempScore = 0;
-      snapshot.forEach((doc) => {
-        if(doc.data().vote === 'liked') {
-          tempScore += 2;
-        } else if(doc.data().vote === 'disliked') {
-          tempScore -= 2;
-        }
-      });
-      setLocalScore(tempScore);
+      
     });
   }, []);
 

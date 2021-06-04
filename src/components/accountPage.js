@@ -28,11 +28,21 @@ function AccountPage() {
         // dispatch account details to redux
         dispatch(userData({email: user.email, username: user.displayName}));
 
-        // grab users posts - waiting for composite index to built to order by timestamp
+        // grab users posts
         db.collection('posts').where('uid', '==', uid).orderBy('timestamp', 'desc').get().then((snapshot) => {
           if(snapshot.empty) {
-            history.push('/oops');
-            return;
+            // make a check that the user exists at all or if they just don't have posts
+            db.collection('users').where('uid', '==', uid).get().then((snapshot) => {
+              if(snapshot.empty) {
+                // at this point we know the user doesn't exist so point them to 404
+                history.push('/oops');
+                return;
+              }
+              // at this point we know the user exists but hasn't made any posts so we set the username and bounce
+              snapshot.forEach((doc) => {
+                setAccountUsername(doc.data().username);
+              });
+            });
           }
           let tempUserPosts = [];
           snapshot.forEach((doc) => {

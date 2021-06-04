@@ -55,7 +55,7 @@ function LoginPage() {
 
   const handleSignup = () => {
     clearErrors();
-    if(filter.isProfane(email) || filter.isProfane(username)) {
+    if(filter.isProfane(username)) {
       alert('You need to pick a new username or email.');
       return;
     }

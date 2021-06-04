@@ -275,11 +275,13 @@ code {
 
 .vote-button {
   width: 50%;
+  user-select: none;
 }
 
 /* bottom nav */
 
 .bottom-nav {
+  user-select: none;
   width: 100%;
   background: var(--rich-black);
   border-top: 2px solid var(--slate-blue);
@@ -317,6 +319,14 @@ code {
     font-size: .75em;
   }
 
+  .feed-container {
+    width: 70%;
+  }
+
+  .new-post-container {
+    width: 70%;
+  }
+
   .button, .button-clicked {
     font-size: .75em;
   }
@@ -327,6 +337,10 @@ code {
 
   .joke-input {
     font-size: 1em;
+  }
+
+  .input-container, .submition-container {
+    width: 50%;
   }
 }
 
@@ -352,6 +366,14 @@ code {
     margin-top: 0px;
   }
 
+  .feed-container {
+    width: 70%;
+  }
+
+  .new-post-container {
+    width: 70%;
+  }
+
   .joke-input {
     font-size: .75em;
   }
@@ -366,5 +388,23 @@ code {
 
   .vote-button {
     padding: 5px;
+  }
+
+  .error-container {
+    font-size: .75em;
+  }
+}
+
+@media screen and (max-width: 370px) {
+  .bottom-nav {
+    font-size: .8em;
+  }
+
+  .login-header {
+    font-size: 3em;
+  }
+
+  .error-container {
+    font-size: .6em;
   }
 }

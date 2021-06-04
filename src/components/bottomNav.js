@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { newPost } from '../actions/index';
 import fire from '../fire';
 
@@ -8,16 +8,15 @@ function BottomNav(props) {
 
   const history = useHistory();
   const dispatch = useDispatch();
-  const username = useSelector(state => state.userData.username);
 
   const routeHandler = () => {
     dispatch(newPost([]));
     if(props.route === 'My Account') {
       history.push({
-        pathname: `/plustwo/${username}/${fire.auth().currentUser.uid}`,
+        pathname: `/plustwo/${fire.auth().currentUser.displayName}/${fire.auth().currentUser.uid}`,
         state: {
           email: fire.auth().currentUser.email,
-          username: username,
+          username: fire.auth().currentUser.displayName,
           isLoading: props.isLoading
         }
       });

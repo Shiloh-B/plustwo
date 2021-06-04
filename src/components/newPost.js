@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { newPost } from '../actions/index';
 import fire from '../fire';
 import firebase from 'firebase';
@@ -10,7 +10,6 @@ function NewPost() {
   const [post, setPost] = useState('');
   const [lastPostedTime, setLastPostedTime] = useState(0);
 
-  const userData = useSelector(state => state.userData);
   const dispatch = useDispatch();
   const db = fire.firestore();
   const filter = new Filter();
@@ -41,48 +40,58 @@ function NewPost() {
     // set lastPosted time
     setLastPostedTime(new Date());
 
+    // currently a bug with bad-words
+    try {
+      setPost(filter.clean(post));
+    } catch {
+      setPost(post);
+    }
     
     // obj gets created
     let newPostObj = {
-      post: filter.clean(post),
-      username: userData.username,
+      post: post,
+      username: fire.auth().currentUser.displayName,
       uid: fire.auth().currentUser.uid,
       ref: '',
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      score: 0
     }
 
     // post it to the global feed
     db.collection('posts').add({
-      post: filter.clean(post),
-      username: userData.username,
+      post: post,
+      username: fire.auth().currentUser.displayName,
       uid: fire.auth().currentUser.uid,
-      timestamp: newPostObj.timestamp
+      timestamp: newPostObj.timestamp,
+      score: 0
     }).then((ref) => {
       newPostObj.ref = ref.id;
       ref.set({ref: ref.id}, {merge: true});
+      
 
       // finally add it to the redux store
       dispatch(newPost(newPostObj));
     });
 
-    
-    
-
     // clear post input bar
     postRef.current.value = '';
     setPost('');
-    
+  }
 
-    
+  const keyPressHandler = (e) => {
+    if(e.key === 'Enter') {
+      newPostHandler();
+    }
   }
 
   
+
 
   return (
     <div className="new-post-container">
       <p>Got Something to Say?</p>
       <div className="joke-container">
-        <input ref={postRef} className="joke-input" type="text" onChange={(e) => setPost(e.target.value)}></input>
+        <input ref={postRef} onKeyPress={keyPressHandler} className="joke-input" type="text" onChange={(e) => setPost(e.target.value)}></input>
         <div className="post button" onClick={newPostHandler}>Post</div>
       </div>
     </div>

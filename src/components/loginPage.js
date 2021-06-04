@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import fire from '../fire';
 import Login from './login';
 import { useHistory } from 'react-router-dom';
+import Filter from 'bad-words';
 
 function LoginPage() {
 
   const history = useHistory();
   const db = fire.firestore();
+  const filter = new Filter();
 
   const [user, setUser] = useState('');
   const [email, setEmail] = useState('');
@@ -15,16 +17,19 @@ function LoginPage() {
 
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [usernameError, setUsernameError] = useState('');
   const [hasAccount, setHasAccount] = useState(false);
 
   const clearInputs = () => {
     setEmail('');
     setPassword('');
+    setUsername('');
   }
 
   const clearErrors = () => {
     setEmailError('');
     setPasswordError('');
+    setUsernameError('');
   }
 
   const handleLogin = () => {
@@ -33,7 +38,7 @@ function LoginPage() {
     .catch(err => {
       switch(err.code) {
         case "auth/invalid-email":
-          setPasswordError(err.message);
+          setEmailError(err.message);
           break;
         case "auth/user-disabled":
           setPasswordError(err.message);
@@ -44,18 +49,26 @@ function LoginPage() {
         case "auth/wrong-password":
           setPasswordError(err.message);
           break;
+          default:
+            break;
       }
     });
   }
 
   const handleSignup = () => {
     clearErrors();
+    if(filter.isProfane(username)) {
+      setUsernameError('You need to pick a new username.');
+      return;
+    }
     fire.auth().createUserWithEmailAndPassword(email, password)
     .then((res) => {
-      console.log(username);
       res.user.updateProfile({
         displayName: username
+      }).catch((err) => {
+        console.log(err);
       });
+
       db.collection('users').doc(email).set({
         email: email,
         username: username,
@@ -72,6 +85,8 @@ function LoginPage() {
           break;
         case "auth/weak-password":
           setPasswordError(err.message);
+          break;
+        default:
           break;
       }
     });
@@ -91,9 +106,33 @@ function LoginPage() {
     });
   }
 
+  const keyDownSignupHandler = (e) => {
+    if(e.key === 'Enter') {
+      handleSignup();
+    }
+  }
+
+  const keyDownSigninHandler = (e) => {
+    if(e.key === 'Enter') {
+      handleLogin();
+    }
+  }
+
+  const forgotPasswordHandler = () => {
+    fire.auth().sendPasswordResetEmail(email).then(() => {
+      alert('We\'ve sent a password reset link to your email!');
+    }).catch((err) => {
+      setEmailError('Please enter your email into the email box so we may send a recovery link.');
+      console.log(err);
+    });
+    clearInputs();
+    clearErrors();
+  }
+
   useEffect(() => {
     authListener();
-  }, []);
+    return(() => authListener());
+  }, [authListener]);
 
   return (
     <div>
@@ -101,6 +140,7 @@ function LoginPage() {
         setEmail={setEmail}
         username={username}
         setUsername={setUsername} 
+        usernameError={usernameError}
         password={password} 
         setPassword={setPassword}
         handleLogin={handleLogin} 
@@ -108,7 +148,12 @@ function LoginPage() {
         hasAccount={hasAccount}
         setHasAccount={setHasAccount}
         emailError={emailError}
-        passwordError={passwordError} />
+        passwordError={passwordError}
+        clearErrors={clearErrors}
+        clearInputs={clearInputs}
+        keyDownSigninHandler={keyDownSigninHandler}
+        keyDownSignupHandler={keyDownSignupHandler}
+        forgotPasswordHandler={forgotPasswordHandler} />
     </div>
     
   );

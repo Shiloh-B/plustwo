@@ -19,7 +19,7 @@ function UserPost({post}) {
       });
       setScore(tempScore);
     });
-  }, []);
+  }, [db, post.ref]);
 
   return (
     <div className="post-container">

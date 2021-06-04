@@ -1,26 +1,27 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { newPost } from '../actions/index';
 import fire from '../fire';
 
-function BottomNav({route}) {
+function BottomNav(props) {
 
   const history = useHistory();
   const dispatch = useDispatch();
-  const username = useSelector(state => state.userData.username);
 
   const routeHandler = () => {
     dispatch(newPost([]));
-    if(route === 'My Account') {
+    if(props.route === 'My Account') {
       history.push({
-        pathname: `/plustwo/${username}/${fire.auth().currentUser.uid}`,
+        pathname: `/plustwo/${fire.auth().currentUser.displayName}/${fire.auth().currentUser.uid}`,
         state: {
           email: fire.auth().currentUser.email,
-          username: username
+          username: fire.auth().currentUser.displayName,
+          isLoading: props.isLoading
         }
       });
-    } else if(route === "Home") {
+    } else if(props.route === "Home") {
+      dispatch(newPost([]));
       history.push({
         pathname: '/plustwo',
         state: {
@@ -30,9 +31,26 @@ function BottomNav({route}) {
     }
   }
 
+  const mostRecentPostsHandler = () => {
+    props.mostRecentPostsHandler();
+  }
+
+  const mostLikedPostsHandler = () => {
+    props.mostLikedPostsHandler();
+  }
+
+  if(props.route === 'My Account') {
+    return (
+    <div className="bottom-nav">
+      <div className={props.sortBy ? "button-clicked" : "button"} onClick={mostRecentPostsHandler}>Recent Posts</div>
+      <div className="account-button button" onClick={routeHandler}>{props.route}</div>
+      <div className={props.sortBy ? "button" : "button-clicked"} onClick={mostLikedPostsHandler}>Most Liked Posts</div>
+    </div>
+    );
+  }
   return (
     <div className="bottom-nav">
-      <div className="account-button button" onClick={routeHandler}>{route}</div>
+      <div className="account-button button" onClick={routeHandler}>{props.route}</div>
     </div>
   );
 }

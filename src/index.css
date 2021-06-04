@@ -15,6 +15,20 @@ code {
     monospace;
 }
 
+.content-body {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  height: 100vh;
+}
+
+.content {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  height: 90%;
+}
+
 /* General */
 
 :root {
@@ -34,6 +48,7 @@ code {
   transition: all .2s ease;
   margin: .5em;
   font-weight: bold;
+  user-select: none;
 }
 
 .button:hover {
@@ -48,7 +63,24 @@ code {
   cursor: pointer;
   transition: all .2s ease;
   margin: .5em;
-  font-weight: bold
+  font-weight: bold;
+  border: 2px solid var(--slate-blue);
+}
+
+.loading-spinner {
+  border: 16px solid var(--white);
+  border-top: 16px solid var(--persian-blue); 
+  border-bottom: 16px solid var(--persian-blue);
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 2s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* Login Page */
@@ -95,7 +127,7 @@ code {
   margin: 0;
 }
 
-.input-container p {
+.error-message{
   margin: 0;
   text-align: left;
   color: rgb(156, 0, 0);
@@ -116,6 +148,16 @@ code {
 .submition-container p {
   margin-bottom: .25em;
   width: 100%;
+}
+
+.forgot-password {
+  color: var(--slate-blue);
+  text-align: left;
+  font-size: .7em;
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+  margin: .25em 0em;
 }
 
 /* nav */
@@ -150,7 +192,8 @@ code {
 /* New Post */
 
 .new-post-container {
-  margin: 1em auto;
+  margin: 0 auto;
+  margin-top: 1em;
   width: 40%;
   border: 2px solid var(--slate-blue);
   border-radius: 3px;
@@ -171,6 +214,10 @@ code {
   align-items: center;
 }
 
+.joke-input-container {
+  display: block;
+}
+
 .joke-input {
   border: none;
   background-color: var(--slate-blue);
@@ -189,16 +236,22 @@ code {
 
 /* Feed */
 .feed-container {
-  margin: 0 auto;
-  margin-bottom: 1em;
-  max-height: 40em;
+  margin: 1em auto;
   width: 40%;
   border: 2px solid var(--slate-blue);
   border-radius: 3px;
   background-color: var(--rich-black);
   padding: .5em;
-  text-align: center;
   overflow-y: auto;
+  flex-grow: 1;
+}
+
+.post-error {
+  margin: 0 auto;
+  text-align: left;
+  color: rgb(156, 0, 0);
+  font-weight: bold;
+  text-shadow: 0px 1px 1px rgb(92, 0, 0);
 }
 
 /* posts */
@@ -242,6 +295,7 @@ code {
 }
 
 .vote-button {
+  text-align: center;
   width: 50%;
 }
 
@@ -262,19 +316,142 @@ code {
   text-align: center;
 }
 
-.user-post-container {
-  width: 40%;
-  margin: 0 auto;
-  margin-bottom: 1em;
-  border: 2px solid var(--slate-blue);
-  border-radius: 3px;
-  background-color: var(--rich-black);
-  padding: 10px;
-  min-height: 40em;
+.feed-container h2 {
+  margin-top: 0;
 }
 
-.user-post-container h2 {
+.delete-button {
+  font-size: .75em;
+  padding: 5px;
+}
+
+/* Error Component */
+
+.error-container {
   text-align: center;
-  margin: 0;
+  width: 70%;
+  margin: 0 auto;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 }
 
+/* media queries */
+
+@media screen and (max-width: 768px) {
+  .post-joke-container {
+    font-size: .75em;
+  }
+
+  .feed-container {
+    width: 70%;
+  }
+
+  .new-post-container {
+    width: 70%;
+  }
+
+  .button, .button-clicked {
+    font-size: .75em;
+  }
+
+  .vote-button, .logout {
+    font-size: 1em;
+  }
+
+  .joke-input {
+    font-size: 1em;
+  }
+
+  .input-container, .submition-container {
+    width: 50%;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .nav-bar {
+    display: block;
+  }
+
+  .nav-bar h1 {
+    margin-bottom: 0;
+  }
+
+  .grid-column {
+    display: block;
+    margin: 0 auto;
+    width: 25%;
+    text-align: center;
+  }
+
+  .logout {
+    font-size: .75em;
+    padding: 7px;
+    margin-top: 0px;
+  }
+
+  .feed-container {
+    width: 70%;
+  }
+
+  .new-post-container {
+    width: 70%;
+  }
+
+  .joke-input {
+    font-size: .75em;
+  }
+
+  .post-joke-container h1 {
+    font-size: 1.25em;
+  }
+
+  .post-meta-container {
+    font-size: .75em;
+  }
+
+  .vote-button {
+    padding: 5px;
+  }
+
+  .error-container {
+    font-size: .75em;
+  }
+
+  .error-message, .post-error {
+    font-size: .75em;
+  }
+}
+
+@media screen and (max-width: 370px) {
+  .bottom-nav {
+    font-size: .8em;
+  }
+
+  .login-header {
+    font-size: 3em;
+  }
+
+  .error-container {
+    font-size: .6em;
+  }
+}
+
+@media screen and (max-width: 300px) {
+  .feed-container {
+    padding: 2px;
+  }
+
+  .post-joke-container {
+    padding: 3px;
+  }
+
+  .button-vote {
+    font-size: .5em;
+  }
+
+  .button-clicked, .button {
+    padding: 5px;
+  }
+}

@@ -9,6 +9,7 @@ function NewPost() {
 
   const [post, setPost] = useState('');
   const [lastPostedTime, setLastPostedTime] = useState(0);
+  const [postError, setPostError] = useState('');
 
   const dispatch = useDispatch();
   const db = fire.firestore();
@@ -19,6 +20,10 @@ function NewPost() {
     'nigg',
     'crackwhore',
     'beaner',
+    '╰⋃╯',
+    '(‿|‿)',
+    'dick',
+    'Cockwaffle'
   ]
   filter.addWords(...badWordsArray);
 
@@ -26,14 +31,14 @@ function NewPost() {
 
   const newPostHandler = () => {
     if(!post.replace(/\s/g, '').length) {
-      alert('You can\'t post nothing!');
+      setPostError('You can\'t post nothing!');
       postRef.current.value = '';
       setPost('');
       return;
     }
 
     if(new Date() - lastPostedTime < 10000) {
-      alert('You posted too recently!');
+      setPostError('You posted too recently!');
       return;
     }
 
@@ -73,9 +78,10 @@ function NewPost() {
       dispatch(newPost(newPostObj));
     });
 
-    // clear post input bar
+    // clear post input bar, post, and posterror
     postRef.current.value = '';
     setPost('');
+    setPostError('');
   }
 
   const keyPressHandler = (e) => {
@@ -94,6 +100,7 @@ function NewPost() {
         <input ref={postRef} onKeyPress={keyPressHandler} className="joke-input" type="text" onChange={(e) => setPost(e.target.value)}></input>
         <div className="post button" onClick={newPostHandler}>Post</div>
       </div>
+      <p className="post-error">{postError}</p>
     </div>
   );
 }

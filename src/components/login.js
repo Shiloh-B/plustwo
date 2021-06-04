@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 function Login(props) {
 
   const { email, setEmail, password, setPassword, handleLogin, handleSignup, hasAccount, setHasAccount,
-  emailError, passwordError, username, setUsername, clearErrors, clearInputs } = props;
+  emailError, passwordError, usernameError, username, setUsername, clearErrors, clearInputs } = props;
 
   const dispatch = useDispatch();
 
@@ -54,6 +54,7 @@ function Login(props) {
           <label>Username</label>
           <input type="text" className="username" autoFocus required value={username} 
           onChange={e => setUsername(e.target.value)}></input>
+          <p className="error-message">{usernameError}</p>
           <label>Password</label>
           <input type="password" className="password" required value={password}
           onChange={e => setPassword(e.target.value)}></input>

@@ -60,7 +60,7 @@ function AccountPage() {
     });
 
     
-  }, []);
+  }, [db, dispatch, history, uid]);
 
   const userPostsToRender = userPosts.map((post, idx) => <UserPost post={post} key={idx}/>);
   return (

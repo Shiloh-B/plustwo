@@ -6,7 +6,7 @@ import { userLogout } from '../actions/index';
 
 
 
-function Nav() {
+function Nav(props) {
 
   const history = useHistory();
   const dispatch = useDispatch();
@@ -25,6 +25,9 @@ function Nav() {
         email: fire.auth().currentUser.email
       }
     });
+    if(props.mostRecentPostsHandler) {
+      props.mostRecentPostsHandler();
+    }
   }
 
   return (

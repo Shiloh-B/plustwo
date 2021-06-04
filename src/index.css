@@ -204,6 +204,10 @@ code {
   align-items: center;
 }
 
+.joke-input-container {
+  display: block;
+}
+
 .joke-input {
   border: none;
   background-color: var(--slate-blue);
@@ -231,6 +235,14 @@ code {
   text-align: center;
   overflow-y: auto;
   flex-grow: 1;
+}
+
+.post-error {
+  margin: 0 auto;
+  text-align: left;
+  color: rgb(156, 0, 0);
+  font-weight: bold;
+  text-shadow: 0px 1px 1px rgb(92, 0, 0);
 }
 
 /* posts */
@@ -275,13 +287,11 @@ code {
 
 .vote-button {
   width: 50%;
-  user-select: none;
 }
 
 /* bottom nav */
 
 .bottom-nav {
-  user-select: none;
   width: 100%;
   background: var(--rich-black);
   border-top: 2px solid var(--slate-blue);
@@ -393,6 +403,10 @@ code {
   .error-container {
     font-size: .75em;
   }
+
+  .error-message, .post-error {
+    font-size: .75em;
+  }
 }
 
 @media screen and (max-width: 370px) {
@@ -406,5 +420,23 @@ code {
 
   .error-container {
     font-size: .6em;
+  }
+}
+
+@media screen and (max-width: 300px) {
+  .feed-container {
+    padding: 2px;
+  }
+
+  .post-joke-container {
+    padding: 3px;
+  }
+
+  .button-vote {
+    font-size: .5em;
+  }
+
+  .button-clicked, .button {
+    padding: 5px;
   }
 }

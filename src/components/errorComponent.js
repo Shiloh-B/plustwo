@@ -10,14 +10,16 @@ function Error() {
   const [email, setEmail] = useState('');
 
   useEffect(() => {
-    fire.auth().onAuthStateChanged((user) => {
+    const unsubscribe = fire.auth().onAuthStateChanged((user) => {
       if(user) {
         setEmail(user.email);
       } else {
         history.push('/');
       }
-    })
-  }, [])
+    });
+
+    return(() => unsubscribe());
+  }, [history])
 
   return (
     <div className="content-body">

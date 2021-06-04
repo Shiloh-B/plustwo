@@ -53,7 +53,7 @@ function Post({post}) {
   }
 
   useEffect(() => {
-    fire.auth().onAuthStateChanged(user => {
+    const unsubscribe = fire.auth().onAuthStateChanged(user => {
       if(user !== null) {
         db.collection('postVotes').doc(post.ref + user.uid).get().then((res) => {
           if(res.exists) {
@@ -76,8 +76,9 @@ function Post({post}) {
         history.push('/oops');
       }
       
+      return(() => unsubscribe());
     });
-  }, []);
+  }, [db, history, post.ref]);
 
   return (
     <div className="post-container">

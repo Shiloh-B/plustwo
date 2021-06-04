@@ -17,6 +17,7 @@ function LoginPage() {
 
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [usernameError, setUsernameError] = useState('');
   const [hasAccount, setHasAccount] = useState(false);
 
   const clearInputs = () => {
@@ -28,6 +29,7 @@ function LoginPage() {
   const clearErrors = () => {
     setEmailError('');
     setPasswordError('');
+    setUsernameError('');
   }
 
   const handleLogin = () => {
@@ -36,7 +38,7 @@ function LoginPage() {
     .catch(err => {
       switch(err.code) {
         case "auth/invalid-email":
-          setPasswordError(err.message);
+          setEmailError(err.message);
           break;
         case "auth/user-disabled":
           setPasswordError(err.message);
@@ -56,7 +58,7 @@ function LoginPage() {
   const handleSignup = () => {
     clearErrors();
     if(filter.isProfane(username)) {
-      alert('You need to pick a new username or email.');
+      setUsernameError('You need to pick a new username.');
       return;
     }
     fire.auth().createUserWithEmailAndPassword(email, password)
@@ -84,6 +86,8 @@ function LoginPage() {
         case "auth/weak-password":
           setPasswordError(err.message);
           break;
+        default:
+          break;
       }
     });
   }
@@ -104,6 +108,7 @@ function LoginPage() {
 
   useEffect(() => {
     authListener();
+    return(() => authListener());
   }, [authListener]);
 
   return (
@@ -112,6 +117,7 @@ function LoginPage() {
         setEmail={setEmail}
         username={username}
         setUsername={setUsername} 
+        usernameError={usernameError}
         password={password} 
         setPassword={setPassword}
         handleLogin={handleLogin} 

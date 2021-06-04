@@ -31,7 +31,7 @@ function Main() {
     });
     
     
-  }, []);
+  }, [db, dispatch]);
   
   const mostLikedPostsHandler = () => {
     if(!sortBy) {
@@ -73,7 +73,7 @@ function Main() {
   return (
     <div className="content-body">
       <div className="content">
-        <Nav />
+        <Nav mostRecentPostsHandler={mostRecentPostsHandler} />
         <NewPost />
         <Feed isLoading={isLoading} />
       </div>

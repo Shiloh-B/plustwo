@@ -118,6 +118,17 @@ function LoginPage() {
     }
   }
 
+  const forgotPasswordHandler = () => {
+    fire.auth().sendPasswordResetEmail(email).then(() => {
+      alert('We\'ve sent a password reset link to your email!');
+    }).catch((err) => {
+      setEmailError('Please enter your email into the email box so we may send a recovery link.');
+      console.log(err);
+    });
+    clearInputs();
+    clearErrors();
+  }
+
   useEffect(() => {
     authListener();
     return(() => authListener());
@@ -141,7 +152,8 @@ function LoginPage() {
         clearErrors={clearErrors}
         clearInputs={clearInputs}
         keyDownSigninHandler={keyDownSigninHandler}
-        keyDownSignupHandler={keyDownSignupHandler} />
+        keyDownSignupHandler={keyDownSignupHandler}
+        forgotPasswordHandler={forgotPasswordHandler} />
     </div>
     
   );

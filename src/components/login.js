@@ -5,7 +5,8 @@ import { useDispatch } from 'react-redux';
 function Login(props) {
 
   const { email, setEmail, password, setPassword, handleLogin, handleSignup, hasAccount, setHasAccount,
-  emailError, passwordError, usernameError, username, setUsername, clearErrors, clearInputs, keyDownSigninHandler, keyDownSignupHandler } = props;
+  emailError, passwordError, usernameError, username, setUsername, clearErrors, clearInputs, keyDownSigninHandler, keyDownSignupHandler,
+  forgotPasswordHandler } = props;
 
   const dispatch = useDispatch();
 
@@ -33,6 +34,7 @@ function Login(props) {
           <label>Password</label>
           <input onKeyPress={e => keyDownSigninHandler(e)} type="password" className="password" required value={password}
           onChange={e => setPassword(e.target.value)}></input>
+          <p className="forgot-password" onClick={() => forgotPasswordHandler()}>Forgot Your Password?</p>
           <p className="error-message">{passwordError}</p>
         </div>
         <div className="submition-container">

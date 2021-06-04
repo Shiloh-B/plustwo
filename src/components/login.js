@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 function Login(props) {
 
   const { email, setEmail, password, setPassword, handleLogin, handleSignup, hasAccount, setHasAccount,
-  emailError, passwordError, usernameError, username, setUsername, clearErrors, clearInputs } = props;
+  emailError, passwordError, usernameError, username, setUsername, clearErrors, clearInputs, keyDownSigninHandler, keyDownSignupHandler } = props;
 
   const dispatch = useDispatch();
 
@@ -27,11 +27,11 @@ function Login(props) {
         <h1 className="login-header">Plus <span>Two</span></h1>
         <div className="input-container">
           <label>Email</label>
-          <input type="text" className="username" autoFocus required value={email} 
+          <input onKeyPress={e => keyDownSigninHandler(e)} type="text" className="username" autoFocus required value={email} 
           onChange={e => setEmail(e.target.value)}></input>
           <p className="error-message">{emailError}</p>
           <label>Password</label>
-          <input type="password" className="password" required value={password}
+          <input onKeyPress={e => keyDownSigninHandler(e)} type="password" className="password" required value={password}
           onChange={e => setPassword(e.target.value)}></input>
           <p className="error-message">{passwordError}</p>
         </div>
@@ -48,15 +48,15 @@ function Login(props) {
         <h1 className="login-header">Plus <span>Two</span></h1>
         <div className="input-container">
           <label>Email</label>
-          <input type="text" className="username" autoFocus required value={email} 
+          <input onKeyPress={e => keyDownSignupHandler(e)} type="text" className="username" autoFocus required value={email} 
           onChange={e => setEmail(e.target.value)}></input>
           <p className="error-message">{emailError}</p>
           <label>Username</label>
-          <input type="text" className="username" autoFocus required value={username} 
+          <input onKeyPress={e => keyDownSignupHandler(e)} type="text" className="username" autoFocus required value={username} 
           onChange={e => setUsername(e.target.value)}></input>
           <p className="error-message">{usernameError}</p>
           <label>Password</label>
-          <input type="password" className="password" required value={password}
+          <input onKeyPress={e => keyDownSignupHandler(e)} type="password" className="password" required value={password}
           onChange={e => setPassword(e.target.value)}></input>
           <p className="error-message">{passwordError}</p>
         </div>

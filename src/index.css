@@ -232,7 +232,6 @@ code {
   border-radius: 3px;
   background-color: var(--rich-black);
   padding: .5em;
-  text-align: center;
   overflow-y: auto;
   flex-grow: 1;
 }
@@ -286,6 +285,7 @@ code {
 }
 
 .vote-button {
+  text-align: center;
   width: 50%;
 }
 
@@ -308,6 +308,11 @@ code {
 
 .feed-container h2 {
   margin-top: 0;
+}
+
+.delete-button {
+  font-size: .75em;
+  padding: 5px;
 }
 
 /* Error Component */

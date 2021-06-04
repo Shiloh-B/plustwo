@@ -106,6 +106,18 @@ function LoginPage() {
     });
   }
 
+  const keyDownSignupHandler = (e) => {
+    if(e.key === 'Enter') {
+      handleSignup();
+    }
+  }
+
+  const keyDownSigninHandler = (e) => {
+    if(e.key === 'Enter') {
+      handleLogin();
+    }
+  }
+
   useEffect(() => {
     authListener();
     return(() => authListener());
@@ -127,7 +139,9 @@ function LoginPage() {
         emailError={emailError}
         passwordError={passwordError}
         clearErrors={clearErrors}
-        clearInputs={clearInputs} />
+        clearInputs={clearInputs}
+        keyDownSigninHandler={keyDownSigninHandler}
+        keyDownSignupHandler={keyDownSignupHandler} />
     </div>
     
   );

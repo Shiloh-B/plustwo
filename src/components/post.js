@@ -18,6 +18,8 @@ function Post({post}) {
 
 
   const scoreHandler = (vote) => {
+
+    // weird but much more clean implementation of updating localscore and db
     let incomingVote = vote === isClicked ? '' : vote;
     let diff = voteMap.get(incomingVote).value - voteMap.get(isClicked).value;
     const updateScore = firebase.firestore.FieldValue.increment(diff);
@@ -75,9 +77,9 @@ function Post({post}) {
       } else {
         history.push('/oops');
       }
-      
-      return(() => unsubscribe());
     });
+
+    return(() => unsubscribe());
   }, [db, history, post.ref]);
 
   return (

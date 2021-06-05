@@ -3,7 +3,7 @@ import Nav from './nav';
 import NewPost from './newPost';
 import BottomNav from './bottomNav';
 import Feed from './feed';
-import fire from 'firebase';
+import fire from 'firebase/app';
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { newPost } from '../actions/index';

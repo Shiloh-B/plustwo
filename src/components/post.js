@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import fire from '../fire';
 import { useHistory } from 'react-router-dom';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 
 function Post({post}) {
 

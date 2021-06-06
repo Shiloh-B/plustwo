@@ -28,6 +28,9 @@ function Main() {
         dispatch(newPost(doc.data()));
       });
       setIsLoading(false);
+    }).catch((err) => {
+      console.log(err);
+      history.push('/');
     });
     
     
@@ -67,6 +70,8 @@ function Main() {
         dispatch(newPost(doc.data()));
       });
       setIsLoading(false);
+    }).catch((err) => {
+      console.log('/oops');
     });
   }
 

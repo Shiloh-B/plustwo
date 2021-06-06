@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import fire from '../fire';
 import { useHistory } from 'react-router-dom';
 import firebase from 'firebase/app';
+import ClampLines from 'react-clamp-lines';
 
 function Post({post}) {
 
@@ -94,7 +95,15 @@ function Post({post}) {
         }
       </div>
       <div className="post-joke-container">
-        <h1>{post.post}</h1>
+        <ClampLines 
+          text={post.post}
+          id={post.ref}
+          lines={4}
+          ellipsis="..."
+          moreText="More"
+          lessText="Less"
+          innerElement="h1"
+        />
       </div>
       
       <div className="voting-container">

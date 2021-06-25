@@ -3,7 +3,7 @@ import Nav from './nav';
 import NewPost from './newPost';
 import BottomNav from './bottomNav';
 import Feed from './feed';
-import fire from 'firebase';
+import fire from 'firebase/app';
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { newPost } from '../actions/index';
@@ -28,6 +28,9 @@ function Main() {
         dispatch(newPost(doc.data()));
       });
       setIsLoading(false);
+    }).catch((err) => {
+      console.log(err);
+      history.push('/');
     });
     
     
@@ -67,6 +70,8 @@ function Main() {
         dispatch(newPost(doc.data()));
       });
       setIsLoading(false);
+    }).catch((err) => {
+      console.log('/oops');
     });
   }
 

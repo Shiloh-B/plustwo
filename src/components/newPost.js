@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { newPost } from '../actions/index';
 import fire from '../fire';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 import Filter from 'bad-words';
 
 function NewPost() {
